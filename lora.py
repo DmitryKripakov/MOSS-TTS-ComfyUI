@@ -131,9 +131,10 @@ def check_compatible(model: nn.Module, weights: LoraWeights, label: str) -> None
                        f"{(mod.out_features, mod.in_features)}")
     if missing or bad:
         raise ValueError(
-            f"LoRA {label!r} does not fit the loaded model ({len(missing)} missing, {len(bad)} wrong "
-            f"shape: {(missing + bad)[:3]}). It was trained for {weights.base or 'another model'} — "
-            "load that model (LAION's adapters need LAION voice-acting sft3)."
+            f"LoRA {label!r} does not fit the loaded model ({len(missing)} of {len(weights.modules)} "
+            f"layers missing, {len(bad)} of other shape: {(missing + bad)[:3]}). LAION's adapters are "
+            "made for 'LAION voice-acting sft3' (4.55B Local) only — load that model; the 8B is a "
+            f"different architecture. (Adapter base: {weights.base or 'unknown'}.)"
         )
 
 

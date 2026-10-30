@@ -14,6 +14,7 @@ Variant differences handled here (see assets/ for the definitive APIs):
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any, Optional
 
 import torch
@@ -102,6 +103,41 @@ def _build_user_kwargs(
     if instruction and instruction.strip():
         kwargs["instruction"] = instruction.strip()
     return kwargs
+
+
+_TIMED_TAG = re.compile(r"\[\s*\d+(?:\.\d+)?\s+seconds\s+(?:duration|pause)\s*\]", re.I)
+
+
+def _check_text_format(bundle: MossTTSBundle, *texts: str) -> None:
+    """A timed sft3 script (Script Builder) only means something to the Local
+    family fine-tune it was made for; a Delay-family model (8B, VoiceGenerator)
+    reads the tags as words — noise, silence or minutes of babble."""
+    if bundle.spec.asset_pkg != "moss_tts_delay":
+        return
+    if any(_TIMED_TAG.search(t or "") for t in texts):
+        raise ValueError(
+            f"The text is an sft3 timed script ([N.N seconds duration] tags from Script Builder), "
+            f"but the loaded model is {bundle.spec.key} (Delay family), which was never trained on it. "
+            "Load 'LAION voice-acting sft3', or for the 8B model set Director System Prompt target to "
+            "'LAION 8B / MOSS — instruction + text' (Script Builder then passes plain text)."
+        )
+
+
+# A take that misses its end-of-speech would run to max_new_tokens (4096 frames
+# ≈ 5.5 min). With a length target there is no reason to go past ~2x of it.
+_TARGET_SLACK, _TARGET_EXTRA = 2.0, 25
+
+
+def _cap_frames(gen: dict, target_tokens: int) -> dict:
+    target = int(target_tokens or 0)
+    if target <= 0:
+        return gen
+    cap = int(target * _TARGET_SLACK) + _TARGET_EXTRA
+    if int(gen.get("max_new_tokens", 0)) > cap:
+        logger.info("[MOSS-TTS] max_new_tokens %s -> %d (2x target_tokens=%d)",
+                    gen["max_new_tokens"], cap, target)
+        gen = {**gen, "max_new_tokens": cap}
+    return gen
 
 
 def _generate_kwargs(bundle: MossTTSBundle, *, max_new_tokens: int, do_sample: bool,
@@ -211,7 +247,8 @@ def generate_speech(bundle: MossTTSBundle, *, text: str, language: str,
         **_build_user_kwargs(text=clean, language=language, instruction=instruction,
                              target_tokens=target_tokens)
     )
-    kwargs = _generate_kwargs(bundle, **gen)
+    _check_text_format(bundle, clean, instruction)
+    kwargs = _generate_kwargs(bundle, **_cap_frames(gen, target_tokens))
     logger.info("[MOSS-TTS] speak variant=%s chars=%d target_tokens=%s",
                 bundle.spec.key, len(clean), target_tokens or "auto")
     wav = _run_generate(bundle, [user], mode="generation", seed=seed,
@@ -230,7 +267,8 @@ def voice_clone(bundle: MossTTSBundle, *, reference_audio: dict, text: str,
         **_build_user_kwargs(text=clean, language=language, instruction=instruction,
                              target_tokens=target_tokens, reference=[codes])
     )
-    kwargs = _generate_kwargs(bundle, **gen)
+    _check_text_format(bundle, clean, instruction)
+    kwargs = _generate_kwargs(bundle, **_cap_frames(gen, target_tokens))
     logger.info("[MOSS-TTS] clone variant=%s chars=%d target_tokens=%s",
                 bundle.spec.key, len(clean), target_tokens or "auto")
     wav = _run_generate(bundle, [user], mode="generation", seed=seed,
@@ -274,7 +312,8 @@ def continue_speech(bundle: MossTTSBundle, *, previous_audio: dict,
                              instruction=instruction, target_tokens=total_hint)
     )
     assistant = bundle.processor.build_assistant_message(audio_codes_list=[prev_codes])
-    kwargs = _generate_kwargs(bundle, **gen)
+    _check_text_format(bundle, full_text, instruction)
+    kwargs = _generate_kwargs(bundle, **_cap_frames(gen, target_tokens))
     logger.info(
         "[MOSS-TTS] continue variant=%s prev_chars=%d new_chars=%d prefix_frames=%d target_new=%s total_hint=%s",
         bundle.spec.key, len(prev_text), len(new_text), prefix_frames,

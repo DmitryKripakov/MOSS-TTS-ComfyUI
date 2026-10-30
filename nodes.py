@@ -11,6 +11,8 @@ import logging
 import math
 from typing import Any
 
+import torch
+
 from . import compat, director, runtime
 from . import lora as adapters
 from .compat import ProgressReporter
@@ -438,7 +440,9 @@ class MossTTSV15LoRA:
                                    "model is %s.", lora, mosstts_model.spec.key)
             else:
                 raise FileNotFoundError(f"LoRA {lora!r} not found (models/mosstts_loras or LAION list).")
-            adapters.load(path)  # parse + validate now, not mid-generation
+            weights = adapters.load(path)  # parse + validate now, not mid-generation
+            if isinstance(getattr(mosstts_model, "model", None), torch.nn.Module):
+                adapters.check_compatible(mosstts_model.model, weights, lora)
         speaker = mosstts_model.speaker
         if name.lower() == "none":
             speaker = ""

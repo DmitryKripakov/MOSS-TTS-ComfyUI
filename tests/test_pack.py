@@ -187,6 +187,35 @@ def test_generator_nodes_take_sampling_preset(monkeypatch):
     assert (seen["audio_temperature"], seen["audio_top_k"], seen["audio_repetition_penalty"]) == (1.0, 25, 1.1)
 
 
+def test_codec_dtype_follows_the_reference_pipelines(tmp_path):
+    from moss_tts import native
+
+    V = native.VARIANTS
+    bf16 = torch.bfloat16
+    assert native.codec_dtype(V["local"], bf16) == bf16                 # OpenMOSS: bf16 codec
+    assert native.codec_dtype(V["laion_sft3"], bf16) == torch.float32   # LAION processor: fp32 codec
+    assert native.codec_dtype(V["delay"], bf16) == torch.float32        # v1 codec is all-fp32
+    assert native.codec_dtype(V["laion_va8b"], bf16) == torch.float32
+    assert native.codec_dtype(native.spec_from_dir(_model_dir(tmp_path / "x")), bf16) == torch.float32
+
+
+def test_timed_script_is_refused_by_delay_models_and_length_is_capped():
+    from types import SimpleNamespace
+
+    from moss_tts import runtime
+    from moss_tts.native import VARIANTS
+
+    timed = "[0.3 seconds pause] (calmly) [2.4 seconds duration] hello there, how are you."
+    delay = SimpleNamespace(spec=VARIANTS["laion_va8b"])
+    with pytest.raises(ValueError, match="sft3 timed script.*Delay family"):
+        runtime._check_text_format(delay, "hello", "GENERAL: x\nSCRIPT:\n" + timed)
+    runtime._check_text_format(delay, "hello there (laughs) [pause 1.2s]", "Excited.")   # plain: fine
+    runtime._check_text_format(SimpleNamespace(spec=VARIANTS["laion_sft3"]), timed, "")    # sft3: fine
+    gen = {"max_new_tokens": 4096, "do_sample": True}
+    assert runtime._cap_frames(gen, 148)["max_new_tokens"] == 2 * 148 + 25
+    assert runtime._cap_frames(gen, 0) is gen and runtime._cap_frames({"max_new_tokens": 100}, 148)["max_new_tokens"] == 100
+
+
 # ---------------------------------------------------------------------------
 # estimate tokens
 # ---------------------------------------------------------------------------

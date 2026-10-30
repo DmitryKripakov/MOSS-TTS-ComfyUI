@@ -348,8 +348,8 @@ def load_mosstts_bundle(
     tts_config = native.read_tts_config(spec, model_dir)
     codec_config = native.read_codec_config(spec, codec_dir)
     model = native.build_tts_model(spec, tts_config, attn)
-    codec = native.build_codec_model(spec, codec_config, dtype, attn)
-    codec_dtype = torch.float32 if spec.codec_asset_pkg == "moss_audio_tokenizer_v1" else dtype
+    codec_dtype = native.codec_dtype(spec, dtype)
+    codec = native.build_codec_model(spec, codec_config, codec_dtype, attn)
     native.load_tts_weights(spec, model, model_dir, dtype, weight_device, load_progress_callback)
     native.load_codec_weights(spec, codec, codec_dir, dtype, weight_device, load_progress_callback)
     tokenizer = native.build_tokenizer(model_dir)
