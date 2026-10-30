@@ -13,6 +13,7 @@ Variant differences handled here (see assets/ for the definitive APIs):
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import re
 from typing import Any, Optional
@@ -215,7 +216,8 @@ def _with_speaker(bundle: MossTTSBundle, message):
 
 
 def _run_generate(bundle: MossTTSBundle, conversation, *, mode: str,
-                  seed: int, progress_callback=None, **kwargs) -> torch.Tensor:
+                  seed: int, progress_callback=None, target_frames: int = 0,
+                  **kwargs) -> torch.Tensor:
     bundle = resume_model(bundle)
     lora.apply(bundle.model, getattr(bundle, "loras", ()))   # exactly this bundle's adapters, or none
     conversation = [_with_speaker(bundle, m) for m in conversation]
@@ -223,14 +225,47 @@ def _run_generate(bundle: MossTTSBundle, conversation, *, mode: str,
     batch = bundle.processor([conversation], mode=mode)
     input_ids = batch["input_ids"].to(bundle.device)
     attention_mask = batch["attention_mask"].to(bundle.device)
-    with torch.inference_mode():
+    with torch.inference_mode(), _attention_guard(bundle.device):
         outputs = bundle.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
             progress_callback=progress_callback,
             **kwargs,
         )
-    return _extract_waveform(bundle, outputs)
+    _report_length(bundle, outputs, target_frames)
+    with _attention_guard(bundle.device):
+        return _extract_waveform(bundle, outputs)
+
+
+def _attention_guard(device):
+    """SDPA without the cuDNN kernel for this call — the MOSS README and LAION
+    call it broken for these models. The loader also switches it off
+    globally, but other nodes run in between; this holds per generation."""
+    if torch.device(device).type != "cuda":
+        return contextlib.nullcontext()
+    try:
+        from torch.nn.attention import SDPBackend, sdpa_kernel
+
+        return sdpa_kernel([SDPBackend.FLASH_ATTENTION, SDPBackend.EFFICIENT_ATTENTION, SDPBackend.MATH])
+    except Exception:  # older torch
+        return contextlib.nullcontext()
+
+
+def _report_length(bundle: MossTTSBundle, outputs, target_frames: int) -> None:
+    """A healthy take ends near its target (LAION sft3: within a frame or two).
+    Running far past it means the model never found its end — on GPU that has
+    been the attention kernel; say so in the log."""
+    try:
+        frames = int(outputs[0][1].shape[0])
+    except Exception:
+        return
+    target = int(target_frames or 0)
+    logger.info("[MOSS-TTS] generated %d frames (target %s)", frames, target or "none")
+    if target and frames > target * 1.5:
+        logger.warning(
+            "[MOSS-TTS] generated %d frames for a target of %d — the model did not find the end of "
+            "the line, the output is likely broken. If this repeats, set Load Model attention to "
+            "'eager' (bypasses the GPU attention kernels).", frames, target)
 
 
 # ---------------------------------------------------------------------------
@@ -252,7 +287,7 @@ def generate_speech(bundle: MossTTSBundle, *, text: str, language: str,
     logger.info("[MOSS-TTS] speak variant=%s chars=%d target_tokens=%s",
                 bundle.spec.key, len(clean), target_tokens or "auto")
     wav = _run_generate(bundle, [user], mode="generation", seed=seed,
-                        progress_callback=progress_callback, **kwargs)
+                        progress_callback=progress_callback, target_frames=target_tokens, **kwargs)
     return wav, _frames_of(bundle, wav)
 
 
@@ -272,7 +307,7 @@ def voice_clone(bundle: MossTTSBundle, *, reference_audio: dict, text: str,
     logger.info("[MOSS-TTS] clone variant=%s chars=%d target_tokens=%s",
                 bundle.spec.key, len(clean), target_tokens or "auto")
     wav = _run_generate(bundle, [user], mode="generation", seed=seed,
-                        progress_callback=progress_callback, **kwargs)
+                        progress_callback=progress_callback, target_frames=target_tokens, **kwargs)
     return wav, _frames_of(bundle, wav)
 
 
