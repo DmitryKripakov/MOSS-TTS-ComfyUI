@@ -88,3 +88,25 @@ def test_delay_progress_callback_patch_present():
     assert "show_progress" in params
     # tqdm must be opt-in for pack usage, not hardcoded on
     assert params["show_progress"].default is False
+
+
+def test_laion_finetune_configs_build_through_custom_dir(tmp_path):
+    """LAION's voice-acting fine-tunes (real config.json copies in fixtures/)
+    load as custom folders: family, n_vq and rate come from the config, and
+    the vendored model builds from it. (Checked against the checkpoints'
+    safetensors headers when added: same tensor names and shapes.)"""
+    import shutil
+    from pathlib import Path
+
+    fixtures = Path(__file__).parent / "fixtures"
+    expect = {"laion_sft3_config.json": ("moss_tts_local", 12, 48000, True),
+              "laion_va8b_config.json": ("moss_tts_delay", 32, 24000, False)}
+    for name, (pkg, n_vq, rate, stereo) in expect.items():
+        d = tmp_path / name.replace("_config.json", "")
+        d.mkdir()
+        shutil.copy(fixtures / name, d / "config.json")
+        spec = native.spec_from_dir(d)
+        assert (spec.asset_pkg, spec.n_vq, spec.sample_rate, spec.stereo) == (pkg, n_vq, rate, stereo)
+        assert spec.codec_asset_pkg == VARIANTS["local" if stereo else "delay"].codec_asset_pkg
+        model = native.build_tts_model(spec, native.read_tts_config(spec, d), "sdpa")
+        assert sum(p.numel() for p in model.parameters()) > 1e9

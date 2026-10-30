@@ -45,6 +45,10 @@ python install.py   # 只装缺失的轻量依赖
 
 生成节点都输出 `tokens_generated`（音频帧数，秒数 = 帧 / 12.5），供续写链精确传递前缀长度。
 
+## Fine-tunes（本 fork）
+
+Load Model 增加了 LAION voice-acting 微调（sft3 4.55B、8B）和 `custom_model`（`models/mosstts/` 下自己的微调目录）；生成节点增加了 `sampling_preset`。详见 [README_en.md](README_en.md#fine-tunes-this-fork)。
+
 ## 显存
 
 - Local（4B）：bf16 约 12 GB。
