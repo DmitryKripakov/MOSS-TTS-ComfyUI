@@ -5,6 +5,7 @@ the embedding table) and a synthetic PEFT adapter file."""
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -158,8 +159,10 @@ def test_lora_node_stacks_on_a_copy(tmp_path, monkeypatch):
     monkeypatch.delenv("MOSS_TTS_LORAS_DIR", raising=False)
     monkeypatch.setattr(nodes.compat, "comfy_models_dir", lambda: str(root))
     fetched = []
+    real_fetch = nodes.adapters.fetch_hf
     monkeypatch.setattr(nodes.adapters, "fetch_hf",
-                        lambda repo, sub, rev=None: fetched.append((repo, sub)) or root / "mosstts_loras" / "mine" / lora.ADAPTER_FILE)
+                        lambda repo, sub, rev=None, local_root=None: fetched.append((repo, sub, local_root))
+                        or root / "mosstts_loras" / "mine" / lora.ADAPTER_FILE)
     base = MossTTSBundle(spec=SimpleNamespace(key="laion_sft3"), model=nn.Linear(1, 1), processor=None,
                          codec=nn.Linear(1, 1), model_dir=tmp_path, codec_dir=tmp_path,
                          device=torch.device("cpu"), torch_dtype=torch.float32, dtype_name="fp32",
@@ -171,14 +174,22 @@ def test_lora_node_stacks_on_a_copy(tmp_path, monkeypatch):
     assert base.loras == () and base.speaker == ""                            # the loaded bundle untouched
     assert [x[0] for x in b.loras] == ["mine", "LAION voice / Emma (female, EN) · anime_000"]
     assert b.loras[0][2] == 0.8 and b.speaker == "Emma" and b.model is base.model
-    assert fetched == [("laion/moss-va-sft3-voice-loras", "anime_000")]
+    assert fetched == [("laion/moss-va-sft3-voice-loras", "anime_000", root / "mosstts_loras")]
     (c,) = node.apply(b, "none", 1.0, speaker_name="none")
     assert c.speaker == "" and c.loras == b.loras
     (d,) = node.apply(base, "mine", 1.0, speaker_name="Marlene")
     assert d.speaker == "Marlene"
-    _adapter(root / "mosstts_loras" / "moss-va-sft3-voice-loras" / "anime_016")   # downloaded by hand
-    (e,) = node.apply(base, "moss-va-sft3-voice-loras/anime_016", 1.0)
+    # a LAION adapter already in mosstts_loras (downloaded earlier, or by hand) is listed once,
+    # under its LAION name, and used from disk
+    _adapter(root / "mosstts_loras" / "moss-va-sft3-voice-loras" / "anime_016")
+    monkeypatch.setattr(nodes.adapters, "fetch_hf", real_fetch)
+    choices = node.INPUT_TYPES()["required"]["lora"][0]
+    assert "moss-va-sft3-voice-loras/anime_016" not in choices and "mine" in choices
+    (e,) = node.apply(base, "LAION voice / James (male, EN) · anime_016", 1.0)
     assert e.speaker == "James"
+    assert e.loras[-1][1] == str(root / "mosstts_loras" / "moss-va-sft3-voice-loras" / "anime_016" / lora.ADAPTER_FILE)
+    _adapter(tmp_path / "loose" / "anime_031")                   # outside the LAION repo layout
+    assert lora.known_speaker("anime_031") == "Olivia"
     with pytest.raises(FileNotFoundError):
         node.apply(base, "gone", 1.0)
 
@@ -200,3 +211,35 @@ def test_ensure_keeps_overlays(monkeypatch):
     monkeypatch.setattr(loader, "load_mosstts_bundle", lambda *a, **k: fresh)
     back = loader.ensure_mosstts_bundle(copy)
     assert back.loras == copy.loras and back.speaker == "Emma" and back.model is fresh.model
+
+
+def test_fetch_hf_downloads_into_the_comfy_folder(tmp_path, monkeypatch):
+    import huggingface_hub
+
+    calls = []
+
+    def fake_download(repo, filename, subfolder=None, revision=None, local_dir=None):
+        dest = Path(local_dir) / (subfolder or "") / filename
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text("{}")
+        calls.append((repo, filename, subfolder, local_dir))
+        return str(dest)
+
+    monkeypatch.setattr(huggingface_hub, "hf_hub_download", fake_download)
+    root = tmp_path / "mosstts_loras"
+    got = lora.fetch_hf("laion/moss-va-sft3-emotion-loras", "Anger", "abc", root)
+    assert got == root / "moss-va-sft3-emotion-loras" / "Anger" / lora.ADAPTER_FILE
+    assert [c[1] for c in calls] == [lora.CONFIG_FILE, lora.ADAPTER_FILE]
+    assert calls[0][3] == str(root / "moss-va-sft3-emotion-loras")
+    lora.fetch_hf("laion/moss-va-sft3-emotion-loras", "Anger", "abc", root)     # present: no download
+    assert len(calls) == 2
+    marker = root / "moss-va-sft3-emotion-loras" / ".cache" / "huggingface" / "download" / "x.incomplete"
+    marker.parent.mkdir(parents=True)
+    marker.write_text("")
+    lora.fetch_hf("laion/moss-va-sft3-emotion-loras", "Anger", "abc", root)     # interrupted: resumes
+    assert len(calls) == 4
+    monkeypatch.setenv("MOSS_TTS_LORAS_DIR", str(tmp_path / "env"))
+    assert lora.download_root("/comfy/models") == tmp_path / "env"
+    monkeypatch.delenv("MOSS_TTS_LORAS_DIR")
+    assert lora.download_root("/comfy/models") == Path("/comfy/models/mosstts_loras")
+    assert lora.download_root(None) is None

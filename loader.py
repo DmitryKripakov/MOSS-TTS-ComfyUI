@@ -58,44 +58,80 @@ class MossTTSBundle:
 # Model directory resolution
 # ---------------------------------------------------------------------------
 
+def _comfy_roots(folder: str) -> list[Path]:
+    """models/<folder> plus extra_model_paths.yaml entries for it."""
+    roots = [Path(p) for p in compat.comfy_folder_paths(folder)]
+    comfy_root = compat.comfy_models_dir()
+    if comfy_root and Path(comfy_root) / folder not in roots:
+        roots.append(Path(comfy_root) / folder)
+    return roots
+
+
 def _models_root_candidates() -> list[Path]:
     roots: list[Path] = []
     env_root = os.getenv("MOSS_TTS_MODELS_DIR")
     if env_root:
         roots.append(Path(env_root))
-    comfy_root = compat.comfy_models_dir()
-    if comfy_root:
-        roots.append(Path(comfy_root) / MODEL_FOLDER_NAME)
+    roots.extend(_comfy_roots(MODEL_FOLDER_NAME))
     return roots
 
 
+def download_root() -> Optional[Path]:
+    """Where missing models are downloaded: ComfyUI/models/mosstts (or
+    $MOSS_TTS_MODELS_DIR); None outside ComfyUI -> the HF cache."""
+    env_root = os.getenv("MOSS_TTS_MODELS_DIR")
+    if env_root:
+        return Path(env_root)
+    comfy_root = compat.comfy_models_dir()
+    return Path(comfy_root) / MODEL_FOLDER_NAME if comfy_root else None
+
+
+def _incomplete(folder: Path) -> bool:
+    """A download into this folder was interrupted (huggingface_hub keeps
+    *.incomplete files under .cache/huggingface until a file is finished)."""
+    cache = folder / ".cache" / "huggingface"
+    return cache.is_dir() and any(cache.rglob("*.incomplete"))
+
+
 def _resolve_dir_for(repo_id: str, download_if_missing: bool) -> Path:
-    """Resolve a HF repo to a local directory without copying anything.
+    """Resolve a HF repo to a local directory.
 
     Order: $MOSS_TTS_MODELS_DIR/<Repo-Name> → ComfyUI models/mosstts/<Repo-Name>
-    → HF hub cache snapshot (respecting HF_HOME) → (optionally) download.
+    → HF hub cache snapshot (an earlier download; respecting HF_HOME) →
+    (optionally) download into ComfyUI/models/mosstts/<Repo-Name>, resuming an
+    interrupted one.
     """
     repo_name = repo_id.split("/")[-1]
+    partial = None
     for root in _models_root_candidates():
         candidate = root / repo_name
         if (candidate / "config.json").is_file():
-            return candidate
-    try:
-        from huggingface_hub import snapshot_download
+            if not _incomplete(candidate):
+                return candidate
+            partial = partial or candidate
+    if partial is None:
+        try:
+            from huggingface_hub import snapshot_download
 
-        path = snapshot_download(repo_id, local_files_only=True)
-        return Path(path)
-    except Exception:
-        pass
+            path = snapshot_download(repo_id, local_files_only=True)
+            return Path(path)
+        except Exception:
+            pass
     if not download_if_missing:
+        state = f" ({partial} is an interrupted download)" if partial else ""
         raise FileNotFoundError(
-            f"{repo_id} not found locally. Searched: "
+            f"{repo_id} not found locally{state}. Searched: "
             f"{[str(r / repo_name) for r in _models_root_candidates()]} + HF cache. "
             "Enable download_if_missing or place the model files accordingly."
         )
     from huggingface_hub import snapshot_download
 
-    return Path(snapshot_download(repo_id))
+    root = download_root()
+    if root is None:
+        return Path(snapshot_download(repo_id))
+    target = partial or root / repo_name
+    logger.info("Downloading %s into %s", repo_id, target)
+    return Path(snapshot_download(repo_id, local_dir=str(target)))
 
 
 def resolve_model_dirs(spec: VariantSpec, download_if_missing: bool) -> tuple[Path, Path]:

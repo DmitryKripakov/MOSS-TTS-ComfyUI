@@ -18,7 +18,7 @@ All three are loaded through the same nodes; switch variants in Load Model.
 - No `trust_remote_code`: the model code is vendored under `assets/` (with minimal, clearly marked compatibility patches), so the pack does not depend on whatever happens to be in your HF module cache.
 - Works on both transformers 4.x and 5.x for both variants (patched vendored code + feature detection); E2E-validated on both 5.16 and 4.57 across two machines.
 - Deep ComfyUI memory-management integration: weights register through `ModelPatcher` / `ModelPatcherDynamic` (AIMDO DynamicVRAM aware) and participate in normal unloads; every integration point is feature-detected and degrades gracefully on older ComfyUI.
-- Weights are resolved, in order: `$MOSS_TTS_MODELS_DIR/<Repo-Name>` → `ComfyUI/models/mosstts/<Repo-Name>` → the HF hub cache (respecting `HF_HOME`) → auto-download (when `download_if_missing`).
+- Weights are resolved, in order: `$MOSS_TTS_MODELS_DIR/<Repo-Name>` → `ComfyUI/models/mosstts/<Repo-Name>` (plus `mosstts:` entries of `extra_model_paths.yaml`) → the HF hub cache (respecting `HF_HOME`) → auto-download into `ComfyUI/models/mosstts/<Repo-Name>` (when `download_if_missing`).
 
 ## Install
 
@@ -91,7 +91,8 @@ Director System Prompt ──system_prompt──► Generate Text (core) ──t
   examples exactly.
 - Director `target`: *sft3 — timed script* or *8B / MOSS — instruction + text*
   (one instruction for the whole text, no tags). `voice`: describe the voice
-  (Generate Speech) or leave it to the reference clip (Voice Clone).
+  (plain Generate Speech) or keep it fixed — Voice Clone or a voice LoRA, so the
+  LLM never re-describes it differently per run.
 - sft3 speaks English and German; cues stay English either way. Set the same
   `language` on the generate node, and `sampling_preset` = model recommended.
 
@@ -103,7 +104,8 @@ the generate node:
   adapters target those heads — merging would corrupt the embeddings. Hooks never
   touch the weights; the stack is installed per generation, so branches of one
   workflow sharing the loaded model never leak adapters into each other.
-- LAION's adapters are in the list and download on first use (HF cache):
+- LAION's adapters are in the list and download on first use (into
+  `models/mosstts_loras/<repo name>/<adapter>/`):
   `LAION voice / Emma (female, EN) · anime_000` (500 voices), `LAION emotion / …`
   (40), `LAION DPO quality`, `LAION burst (v2-trained) / …` (64). They are trained on
   **LAION voice-acting sft3** — load that model.
@@ -121,10 +123,21 @@ the generate node:
    similarity — judge by ear.
 3. Both: Voice Clone + the voice adapter at ~0.25 (LAION's demo setting).
 
+### Example workflows (`example_workflows/`)
+
+| File | What it shows |
+|---|---|
+| `moss_tts_laion_director_voice_lora.json` | plain text → LLM director (core Generate Text, Director System Prompt) → Script Builder → sft3 with a LAION voice LoRA |
+| `moss_tts_laion_script_voice_lora.json` | a hand-written script (no LLM) → Script Builder → sft3 with voice + DPO quality LoRAs |
+| `moss_tts_laion_same_voice_clone.json` | the same voice from one reference clip: Voice Clone + voice LoRA at 0.25 |
+
 ### Folder layout
 
-Everything downloads by itself into the Hugging Face cache (`download_if_missing`).
-To keep files in ComfyUI instead, use exactly these folder names:
+Missing models and LAION adapters download by themselves (`download_if_missing`)
+**into the ComfyUI folders below** — `models/mosstts/<repo name>/` and
+`models/mosstts_loras/<repo name>/<adapter>/` — and an interrupted download
+resumes there. A model already in the Hugging Face cache from earlier is used
+from the cache. The same names work for files you put there by hand:
 
 ```
 ComfyUI/models/
