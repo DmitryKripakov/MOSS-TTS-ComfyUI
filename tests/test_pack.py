@@ -3,6 +3,7 @@ fail-fast guards, and comfy-compat fallbacks. No weights, no GPU."""
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -19,7 +20,7 @@ pack = moss_tts
 
 def test_node_registry_complete():
     assert set(pack.NODE_CLASS_MAPPINGS) == set(pack.NODE_DISPLAY_NAME_MAPPINGS)
-    assert len(pack.NODE_CLASS_MAPPINGS) == 9
+    assert len(pack.NODE_CLASS_MAPPINGS) == 10
     for cls in pack.NODE_CLASS_MAPPINGS.values():
         inputs = cls.INPUT_TYPES()
         assert "required" in inputs
@@ -233,6 +234,54 @@ def test_length_report_warns_when_the_end_is_missed(caplog):
     runtime._report_length(bundle, "not a generate output", 148)            # never raises
     with runtime._attention_guard(torch.device("cpu")):                     # no-op off CUDA
         pass
+
+
+def test_transformers5_rope_layout_reads_right_on_both_majors(tmp_path):
+    """LAION's configs (saved by transformers 5) keep rope_theta only inside
+    rope_parameters; transformers 4.x then fell back to 10000 (100x off) and the
+    fine-tunes produced noise. The flat field is copied in every nested config."""
+    import json
+    import shutil
+    from pathlib import Path
+
+    from moss_tts import native
+
+    raw = {"a": {"rope_parameters": {"rope_theta": 1000000, "rope_type": "default"}},
+           "b": {"rope_theta": 5, "rope_parameters": {"rope_theta": 7}}, "c": [1, 2]}
+    native._legacy_rope_fields(raw)
+    assert raw["a"]["rope_theta"] == 1000000 and raw["b"]["rope_theta"] == 5     # never overwrites
+    fixtures = Path(__file__).parent / "fixtures"
+    for name, sub in (("laion_sft3_config.json", "qwen3_config"), ("laion_va8b_config.json", "language_config")):
+        d = tmp_path / name
+        d.mkdir()
+        shutil.copy(fixtures / name, d / "config.json")
+        assert "rope_theta" not in json.loads((d / "config.json").read_text())[sub]   # the trap is real
+        c = getattr(native.read_tts_config(native.spec_from_dir(d), d), sub)
+        theta = getattr(c, "rope_theta", None)                    # transformers 4.x: the flat field
+        if theta is None:                                         # transformers 5.x: rope_parameters only
+            theta = c.rope_parameters["rope_theta"]
+        assert float(theta) == 1000000.0
+
+
+def test_self_test_report_without_a_gpu(tmp_path):
+    from types import SimpleNamespace
+
+    from safetensors.torch import save_file
+
+    from moss_tts import selftest
+
+    model = torch.nn.Sequential(torch.nn.Linear(4, 4))
+    save_file({k: v.contiguous() for k, v in model.state_dict().items()}, str(tmp_path / "model.safetensors"))
+    bundle = SimpleNamespace(spec=SimpleNamespace(key="local"), model=model, model_dir=tmp_path,
+                             device=torch.device("cpu"), torch_dtype=torch.float32, attn_implementation="sdpa")
+    report = selftest.run(bundle)
+    assert "2 tensors compared with disk" in report and "BAD" not in report
+    assert "reference is for laion_sft3" in report
+    with torch.no_grad():
+        model[0].weight.add_(1.0)                                     # damaged on the way in
+    assert "BAD 0.weight" in selftest.run(bundle)
+    ref = json.loads(selftest.REFERENCE_FILE.read_text())
+    assert ref["model"] == "laion_sft3" and len(ref["frames"]) == selftest.GREEDY["max_new_tokens"] + 1
 
 
 # ---------------------------------------------------------------------------
