@@ -10,7 +10,7 @@ import logging
 import math
 from typing import Any
 
-from . import runtime
+from . import director, runtime
 from .compat import ProgressReporter
 from .loader import (
     ATTENTION_OPTIONS,
@@ -365,6 +365,103 @@ class MossTTSV15EstimateTokens:
         return (int(math.ceil(seconds * 12.5)),)
 
 
+class MossTTSV15DirectorPrompt:
+    """System prompt for an LLM that turns plain text into a performance for
+    the voice-acting fine-tunes. Use it as the system prompt of any text
+    generation node; feed its reply to Script Builder."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "target": (director.TARGETS, {
+                    "default": director.TARGET_SFT3,
+                    "tooltip": "sft3: a script with a delivery cue per sentence, vocal bursts and beats "
+                               "(Script Builder adds the timing). 8B / MOSS: one instruction + the text.",
+                }),
+                "voice": (director.VOICE_MODES, {
+                    "default": director.VOICE_DESCRIBE,
+                    "tooltip": "describe the voice: the LLM picks age / gender / timbre for Generate "
+                               "Speech. reference clip: for Voice Clone — the LLM must not describe the "
+                               "voice, it would fight the reference.",
+                }),
+                "wording": (director.WORDING_MODES, {
+                    "default": director.WORDING_EXACT,
+                    "tooltip": "Keep your words exactly (only cues / sounds / beats are added) or let the "
+                               "LLM smooth them for speech.",
+                }),
+                "bursts": (director.BURST_MODES, {
+                    "default": director.BURSTS_OFTEN,
+                    "tooltip": "Vocal bursts (laughs, sighs, breaths) — sft3 only. LAION: real speech is "
+                               "full of them; a line without any sounds read rather than spoken.",
+                }),
+            },
+            "optional": {
+                "extra": ("STRING", {"multiline": True, "default": "",
+                                     "tooltip": "Your own notes appended to the prompt (character, "
+                                                "scene, style)."}),
+            },
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("system_prompt",)
+    FUNCTION = "build"
+    CATEGORY = "MOSS-TTS v1.5"
+    DESCRIPTION = ("System prompt for an LLM (e.g. ComfyUI's Generate Text) that turns plain text into a "
+                   "voice-acting performance for the LAION fine-tunes. Feed the LLM's reply to Script Builder.")
+
+    def build(self, target, voice, wording, bursts, extra=""):
+        return (director.system_prompt(target, voice, wording, bursts, extra),)
+
+
+class MossTTSV15ScriptBuilder:
+    """Director reply -> instruction / text / target_tokens for the MOSS nodes."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "director_reply": ("STRING", {
+                    "multiline": True, "default": "",
+                    "tooltip": "The LLM's reply (GENERAL: / SCRIPT: or INSTRUCTION: / TEXT:), or a script "
+                               "you wrote yourself. <think> blocks and code fences are ignored.",
+                }),
+                "format": (["auto", "sft3 timed script", "instruction + text"], {
+                    "default": "auto",
+                    "tooltip": "auto: by the reply's fields (SCRIPT: -> sft3, INSTRUCTION: / TEXT: -> "
+                               "instruction + text; unlabelled text -> sft3 script).",
+                }),
+                "language": (["English", "German"] + [l for l in runtime.LANGUAGES
+                                                      if l not in ("auto", "English", "German")], {
+                    "default": "English",
+                    "tooltip": "Language code at the end of GENERAL (sft3 knows English and German). "
+                               "Set the same language on the generate node.",
+                }),
+                "speed": ("FLOAT", {"default": 1.0, "min": 0.5, "max": 2.0, "step": 0.05,
+                                    "tooltip": "Speech rate for the computed durations: 4 frames "
+                                               "(0.32 s) per word at 1.0."}),
+                "target_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 600.0, "step": 0.1,
+                                             "tooltip": "0 = natural length. Otherwise the speech is "
+                                                        "stretched to fit (pauses and sounds kept), within "
+                                                        "x0.6-x1.5 — beyond that the model invents words."}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING", "STRING", "INT", "FLOAT", "STRING")
+    RETURN_NAMES = ("instruction", "text", "target_tokens", "seconds", "report")
+    FUNCTION = "build"
+    CATEGORY = "MOSS-TTS v1.5"
+    DESCRIPTION = ("Turns a director reply into the generate node's instruction / text / target_tokens. "
+                   "sft3: adds every duration, pause and sound length so they add up to target_tokens, "
+                   "and puts the timed script into both SCRIPT: and text, byte-identical.")
+
+    def build(self, director_reply, format, language, speed, target_seconds):
+        b = director.build(director_reply, fmt=format, language=language, speed=speed,
+                           target_seconds=target_seconds)
+        logger.info("[MOSS-TTS] Script Builder: %s", b.report.replace("\n", " | "))
+        return (b.instruction, b.text, b.target_tokens, b.seconds, b.report)
+
+
 def _is_cjk(text: str) -> bool:
     for ch in text[:200]:
         code = ord(ch)
@@ -381,6 +478,8 @@ NODE_CLASS_MAPPINGS = {
     "MossTTSV15_VoiceDesign": MossTTSV15VoiceDesign,
     "MossTTSV15_ContinueSpeech": MossTTSV15ContinueSpeech,
     "MossTTSV15_EstimateTokens": MossTTSV15EstimateTokens,
+    "MossTTSV15_DirectorPrompt": MossTTSV15DirectorPrompt,
+    "MossTTSV15_ScriptBuilder": MossTTSV15ScriptBuilder,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -390,4 +489,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MossTTSV15_VoiceDesign": "MOSS-TTS v1.5 Voice Design",
     "MossTTSV15_ContinueSpeech": "MOSS-TTS v1.5 Continue Speech",
     "MossTTSV15_EstimateTokens": "MOSS-TTS v1.5 Estimate Tokens",
+    "MossTTSV15_DirectorPrompt": "MOSS-TTS v1.5 Director System Prompt",
+    "MossTTSV15_ScriptBuilder": "MOSS-TTS v1.5 Script Builder",
 }
