@@ -18,6 +18,7 @@ from typing import Any, Optional
 
 import torch
 
+from . import lora
 from .loader import MossTTSBundle, ensure_mosstts_bundle, resume_codec, resume_model
 
 logger = logging.getLogger("ComfyUI-MOSS-TTS-v15")
@@ -161,9 +162,27 @@ def _encode_reference(bundle: MossTTSBundle, audio: dict) -> torch.Tensor:
     return codes_list[0]
 
 
+_NO_REFERENCE = "- Reference(s):\nNone\n"
+
+
+def _with_speaker(bundle: MossTTSBundle, message):
+    """Name-mode prompt (`Speaker: <name>` under Reference(s)) — how LAION's
+    voice profiles were trained besides reference audio. Only where the
+    message has no reference audio."""
+    speaker = (getattr(bundle, "speaker", "") or "").strip()
+    if not speaker or not isinstance(message, dict) or message.get("role") != "user":
+        return message
+    content = message.get("content")
+    if not isinstance(content, str) or _NO_REFERENCE not in content:
+        return message
+    return {**message, "content": content.replace(_NO_REFERENCE, f"- Reference(s):\nSpeaker: {speaker}\n", 1)}
+
+
 def _run_generate(bundle: MossTTSBundle, conversation, *, mode: str,
                   seed: int, progress_callback=None, **kwargs) -> torch.Tensor:
     bundle = resume_model(bundle)
+    lora.apply(bundle.model, getattr(bundle, "loras", ()))   # exactly this bundle's adapters, or none
+    conversation = [_with_speaker(bundle, m) for m in conversation]
     seed_everything(seed)
     batch = bundle.processor([conversation], mode=mode)
     input_ids = batch["input_ids"].to(bundle.device)

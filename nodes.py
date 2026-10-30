@@ -6,11 +6,13 @@ AST-parseable surface — exactly what the ComfyUI registry crawler expects.
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 import math
 from typing import Any
 
-from . import director, runtime
+from . import compat, director, runtime
+from . import lora as adapters
 from .compat import ProgressReporter
 from .loader import (
     ATTENTION_OPTIONS,
@@ -365,6 +367,84 @@ class MossTTSV15EstimateTokens:
         return (int(math.ceil(seconds * 12.5)),)
 
 
+_LORA_NONE = "none"
+
+
+def _lora_choices() -> tuple[dict, dict]:
+    return adapters.list_local(compat.comfy_models_dir()), adapters.hf_choices()
+
+
+class MossTTSV15LoRA:
+    """Adds one LoRA adapter (with its strength) to the model's adapter stack.
+    Chain several: voice + emotion + DPO quality."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        local, hf = _lora_choices()
+        return {
+            "required": {
+                "mosstts_model": (MODEL_TYPE, {}),
+                "lora": ([_LORA_NONE] + sorted(local) + list(hf), {
+                    "default": _LORA_NONE,
+                    "tooltip": "Your adapters: folders with adapter_model.safetensors (+ "
+                               "adapter_config.json) under models/mosstts_loras. LAION's published "
+                               "adapters (voices, emotions, DPO quality, sounds) download on first use. "
+                               "LAION adapters are trained on LAION voice-acting sft3 — load that model.",
+                }),
+                "strength": ("FLOAT", {"default": 1.0, "min": -3.0, "max": 3.0, "step": 0.05,
+                                       "tooltip": "Scale of this adapter. LAION: voice 1.0 (trained value, "
+                                                  "not swept), emotion 1.0-1.5, DPO quality 1.0."}),
+            },
+            "optional": {
+                "speaker_name": ("STRING", {
+                    "default": "",
+                    "tooltip": "Puts 'Speaker: <name>' into the prompt when there is no reference "
+                               "audio — the name mode LAION's voices were trained with. Empty = the "
+                               "LAION voice's own name (shown in the list), nothing for other adapters. "
+                               "'none' = no name.",
+                }),
+            },
+        }
+
+    RETURN_TYPES = (MODEL_TYPE,)
+    RETURN_NAMES = ("mosstts_model",)
+    FUNCTION = "apply"
+    CATEGORY = "MOSS-TTS v1.5"
+    DESCRIPTION = ("Adds a LoRA adapter to the MOSS-TTS model, unmerged (the output heads share weights "
+                   "with the embeddings, so merging would break the model). Chain several, each with its "
+                   "own strength. A LAION voice also sets 'Speaker: <name>' for a consistent voice.")
+
+    def apply(self, mosstts_model, lora, strength, speaker_name=""):
+        name = (speaker_name or "").strip()
+        if lora == _LORA_NONE:
+            path, auto_speaker = None, ""
+        else:
+            local, hf = _lora_choices()
+            if lora in local:
+                path, auto_speaker = local[lora], adapters.known_speaker(local[lora].parent.name)
+            elif lora in hf:
+                entry = hf[lora]
+                path = adapters.fetch_hf(entry["repo"], entry["subfolder"], entry.get("revision"))
+                auto_speaker = entry["speaker"]
+                if not str(getattr(mosstts_model.spec, "key", "")).startswith(("laion_sft3", "custom:")):
+                    logger.warning("[MOSS-TTS LoRA] %s is trained on LAION voice-acting sft3; the loaded "
+                                   "model is %s.", lora, mosstts_model.spec.key)
+            else:
+                raise FileNotFoundError(f"LoRA {lora!r} not found (models/mosstts_loras or LAION list).")
+            adapters.load(path)  # parse + validate now, not mid-generation
+        speaker = mosstts_model.speaker
+        if name.lower() == "none":
+            speaker = ""
+        elif name:
+            speaker = name
+        elif auto_speaker:
+            speaker = auto_speaker
+        loras = tuple(mosstts_model.loras)
+        if path is not None and float(strength) != 0.0:
+            loras += ((lora, str(path), float(strength)),)
+        return (dataclasses.replace(mosstts_model, loras=loras, speaker=speaker),)
+
+
 class MossTTSV15DirectorPrompt:
     """System prompt for an LLM that turns plain text into a performance for
     the voice-acting fine-tunes. Use it as the system prompt of any text
@@ -480,6 +560,7 @@ NODE_CLASS_MAPPINGS = {
     "MossTTSV15_EstimateTokens": MossTTSV15EstimateTokens,
     "MossTTSV15_DirectorPrompt": MossTTSV15DirectorPrompt,
     "MossTTSV15_ScriptBuilder": MossTTSV15ScriptBuilder,
+    "MossTTSV15_LoRA": MossTTSV15LoRA,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -491,4 +572,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MossTTSV15_EstimateTokens": "MOSS-TTS v1.5 Estimate Tokens",
     "MossTTSV15_DirectorPrompt": "MOSS-TTS v1.5 Director System Prompt",
     "MossTTSV15_ScriptBuilder": "MOSS-TTS v1.5 Script Builder",
+    "MossTTSV15_LoRA": "MOSS-TTS v1.5 LoRA",
 }

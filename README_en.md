@@ -48,6 +48,7 @@ and `download_if_missing` is on, they download from Hugging Face
 | MOSS-TTS v1.5 Continue Speech | Prefix continuation: extend a clip in the same voice. Outputs both the new segment and the stitched full audio (+ exact frame counts for chaining). |
 | MOSS-TTS v1.5 Estimate Tokens | Text → `target_tokens` estimate for duration control. |
 | MOSS-TTS v1.5 Director System Prompt | System prompt for an LLM (e.g. ComfyUI's Generate Text) that turns plain text into a voice-acting performance for the LAION fine-tunes. |
+| MOSS-TTS v1.5 LoRA | Adds a LoRA adapter (unmerged, chainable, own strength) — your own or one of LAION's 605 (500 voices, 40 emotions, DPO quality, 64 sounds). A LAION voice also sets `Speaker: <name>`. |
 | MOSS-TTS v1.5 Script Builder | The LLM's reply → `instruction`, `text`, `target_tokens` for the generate nodes; for sft3 it computes every duration / pause / sound length. |
 
 All generator nodes output `tokens_generated` (audio frames; seconds = frames / 12.5) so continuation chains can hand exact prefix lengths forward.
@@ -93,6 +94,62 @@ Director System Prompt ──system_prompt──► Generate Text (core) ──t
   (Generate Speech) or leave it to the reference clip (Voice Clone).
 - sft3 speaks English and German; cues stay English either way. Set the same
   `language` on the generate node, and `sampling_preset` = model recommended.
+
+**LoRA adapters** — `MOSS-TTS v1.5 LoRA`, chain several between Load Model and
+the generate node:
+
+- Applied **unmerged**, as forward hooks on the adapted Linear layers: the Local
+  family's output heads *are* its input embeddings (weight-tied), and LAION's
+  adapters target those heads — merging would corrupt the embeddings. Hooks never
+  touch the weights; the stack is installed per generation, so branches of one
+  workflow sharing the loaded model never leak adapters into each other.
+- LAION's adapters are in the list and download on first use (HF cache):
+  `LAION voice / Emma (female, EN) · anime_000` (500 voices), `LAION emotion / …`
+  (40), `LAION DPO quality`, `LAION burst (v2-trained) / …` (64). They are trained on
+  **LAION voice-acting sft3** — load that model.
+- A LAION voice also puts `Speaker: <name>` under `Reference(s)` (when there is no
+  reference audio) — the name mode LAION's voice profiles were trained with.
+  `speaker_name` overrides it (`none` = off; any name for your own adapters).
+- LAION's recipe: voice 1.0 (trained value, not swept), emotion 1.0–1.5, DPO
+  quality 1.0. Deep stacks cost intelligibility — add adapters one at a time.
+
+**Same voice across generations**, most reliable first:
+1. **Voice Clone with one fixed reference clip** (5–15 s). LAION's own demo takes
+   the identity from a reference recording.
+2. **LAION voice adapter + its speaker name** on Generate Speech, plus the same
+   GENERAL voice description and seed. LAION never measured the adapters' speaker
+   similarity — judge by ear.
+3. Both: Voice Clone + the voice adapter at ~0.25 (LAION's demo setting).
+
+### Folder layout
+
+Everything downloads by itself into the Hugging Face cache (`download_if_missing`).
+To keep files in ComfyUI instead, use exactly these folder names:
+
+```
+ComfyUI/models/
+├── mosstts/                                           ← models (or $MOSS_TTS_MODELS_DIR)
+│   ├── moss-tts-local-transformer-4.55b-voice-acting-v2-sft3/   LAION sft3
+│   ├── moss-tts-v1.5-8b-voice-acting/                           LAION 8B
+│   ├── MOSS-TTS-Local-Transformer-v1.5/                         OpenMOSS Local
+│   ├── MOSS-TTS-v1.5/                                           OpenMOSS 8B
+│   ├── MOSS-VoiceGenerator/
+│   ├── MOSS-Audio-Tokenizer-v2/        codec for Local / sft3 / Local-family fine-tunes
+│   ├── MOSS-Audio-Tokenizer/           codec for the 8B / VoiceGenerator / Delay fine-tunes
+│   ├── my_voice_model/                 your fine-tune → Load Model `custom_model`
+│   └── runs/ckpt-500/                  (up to two levels deep)
+└── mosstts_loras/                                     ← adapters (or $MOSS_TTS_LORAS_DIR)
+    ├── my_voice/                       adapter_model.safetensors + adapter_config.json
+    └── moss-va-sft3-voice-loras/       a whole HF adapter repo works as is
+        └── anime_000/                  (LAION voice folders still get their speaker name)
+```
+
+Each model folder holds the HF repo's files (config.json, *.safetensors, tokenizer
+files). E.g. `hf download laion/moss-tts-local-transformer-4.55b-voice-acting-v2-sft3
+--local-dir ComfyUI/models/mosstts/moss-tts-local-transformer-4.55b-voice-acting-v2-sft3`,
+`hf download laion/moss-va-sft3-voice-loras --include "anime_000/*" --local-dir
+ComfyUI/models/mosstts_loras/moss-va-sft3-voice-loras`. Refresh the page after adding
+folders.
 
 **`sampling_preset`** (Generate / Clone / Design / Continue): `widgets` (default,
 old behaviour) or `model recommended` — the audio temperature / top_p / top_k /

@@ -11,13 +11,13 @@ from __future__ import annotations
 import gc
 import logging
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Callable, Optional
 
 import torch
 
-from . import compat, native
+from . import compat, lora, native
 from .native import VARIANTS, VariantSpec
 
 logger = logging.getLogger("ComfyUI-MOSS-TTS-v15")
@@ -44,6 +44,10 @@ class MossTTSBundle:
     dtype_name: str
     attn_implementation: str
     patchers: list[Any] = field(default_factory=list, repr=False)
+    # Per-node overlays, set on a COPY of the bundle by the LoRA node
+    # (dataclasses.replace) — the loaded weights stay shared and untouched.
+    loras: tuple = ()          # ((label, adapter path, strength), …), applied per generation
+    speaker: str = ""          # "Speaker: <name>" in Reference(s) when there is no reference audio
 
     @property
     def sample_rate(self) -> int:
@@ -366,7 +370,8 @@ def ensure_mosstts_bundle(bundle: MossTTSBundle) -> MossTTSBundle:
     runtime node needs that variant again.
     """
     if (
-        bundle is _ACTIVE_BUNDLE
+        _ACTIVE_BUNDLE is not None
+        and bundle.model is _ACTIVE_BUNDLE.model   # the active bundle or a LoRA-node copy of it
         and isinstance(bundle.model, torch.nn.Module)
         and isinstance(bundle.codec, torch.nn.Module)
     ):
@@ -375,13 +380,15 @@ def ensure_mosstts_bundle(bundle: MossTTSBundle) -> MossTTSBundle:
     extra = {}
     if getattr(bundle.spec, "local_dir", None):
         extra["custom_dir"] = bundle.spec.local_dir
-    return load_mosstts_bundle(
+    fresh = load_mosstts_bundle(
         bundle.spec.key,
         dtype_name=bundle.dtype_name,
         attention=bundle.attn_implementation,
         download_if_missing=False,
         **extra,
     )
+    overlays = {k: getattr(bundle, k) for k in ("loras", "speaker") if getattr(bundle, k, None)}
+    return replace(fresh, **overlays) if overlays and isinstance(fresh, MossTTSBundle) else fresh
 
 
 def resume_model(bundle: MossTTSBundle) -> MossTTSBundle:
@@ -413,6 +420,7 @@ def unload_mosstts_bundle(bundle: Optional[MossTTSBundle], reason: str = "reques
         except Exception:
             pass
     bundle.patchers.clear()
+    lora.clear(bundle.model if isinstance(bundle.model, torch.nn.Module) else None)
     for module in (bundle.model, bundle.codec):
         if not isinstance(module, torch.nn.Module):
             continue
