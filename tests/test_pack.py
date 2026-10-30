@@ -216,6 +216,25 @@ def test_timed_script_is_refused_by_delay_models_and_length_is_capped():
     assert runtime._cap_frames(gen, 0) is gen and runtime._cap_frames({"max_new_tokens": 100}, 148)["max_new_tokens"] == 100
 
 
+def test_length_report_warns_when_the_end_is_missed(caplog):
+    import logging
+    from types import SimpleNamespace
+
+    from moss_tts import runtime
+
+    bundle = SimpleNamespace(spec=SimpleNamespace(key="laion_sft3"))
+    outputs = [(0, torch.zeros(149, 13))]
+    with caplog.at_level(logging.INFO, logger="ComfyUI-MOSS-TTS-v15"):
+        runtime._report_length(bundle, outputs, 148)
+    assert "generated 149 frames (target 148)" in caplog.text and "did not find the end" not in caplog.text
+    with caplog.at_level(logging.INFO, logger="ComfyUI-MOSS-TTS-v15"):
+        runtime._report_length(bundle, [(0, torch.zeros(237, 13))], 148)
+    assert "did not find the end" in caplog.text and "eager" in caplog.text
+    runtime._report_length(bundle, "not a generate output", 148)            # never raises
+    with runtime._attention_guard(torch.device("cpu")):                     # no-op off CUDA
+        pass
+
+
 # ---------------------------------------------------------------------------
 # estimate tokens
 # ---------------------------------------------------------------------------
