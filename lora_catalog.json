@@ -1,0 +1,2953 @@
+{
+ "source": "Hugging Face, LAION (CC-BY-4.0); names: laion/laion-voice-profiles-sft names.json",
+ "groups": [
+  {
+   "prefix": "LAION voice / ",
+   "repo": "laion/moss-va-sft3-voice-loras",
+   "revision": "72ec46198b2daa2c53b54e80b4e50245099889e4",
+   "adapters": [
+    {
+     "label": "Aaron (male, EN) · emolia_c1073",
+     "subfolder": "emolia_c1073",
+     "speaker": "Aaron"
+    },
+    {
+     "label": "Abigail (female, EN) · anime_186",
+     "subfolder": "anime_186",
+     "speaker": "Abigail"
+    },
+    {
+     "label": "Adam (male, EN) · emolia_c1112",
+     "subfolder": "emolia_c1112",
+     "speaker": "Adam"
+    },
+    {
+     "label": "Adelaide (female, EN) · k302_age3_bg1",
+     "subfolder": "k302_age3_bg1",
+     "speaker": "Adelaide"
+    },
+    {
+     "label": "Alan (male, EN) · emolia_c1969",
+     "subfolder": "emolia_c1969",
+     "speaker": "Alan"
+    },
+    {
+     "label": "Albert (male, EN) · emolia_c1950",
+     "subfolder": "emolia_c1950",
+     "speaker": "Albert"
+    },
+    {
+     "label": "Alex (?, DE) · mediathek_0463",
+     "subfolder": "mediathek_0463",
+     "speaker": "Alex"
+    },
+    {
+     "label": "Alexander (male, EN) · emolia_c0977",
+     "subfolder": "emolia_c0977",
+     "speaker": "Alexander"
+    },
+    {
+     "label": "Alexis (?, EN) · k498_age2_bg1",
+     "subfolder": "k498_age2_bg1",
+     "speaker": "Alexis"
+    },
+    {
+     "label": "Alice (female, EN) · emolia_c0431",
+     "subfolder": "emolia_c0431",
+     "speaker": "Alice"
+    },
+    {
+     "label": "Alistair (male, EN) · k369_age2_bg0",
+     "subfolder": "k369_age2_bg0",
+     "speaker": "Alistair"
+    },
+    {
+     "label": "Ambrose (male, EN) · emolia_c2930",
+     "subfolder": "emolia_c2930",
+     "speaker": "Ambrose"
+    },
+    {
+     "label": "Amelia (female, EN) · anime_122",
+     "subfolder": "anime_122",
+     "speaker": "Amelia"
+    },
+    {
+     "label": "Andrea (?, DE) · mediathek_0184",
+     "subfolder": "mediathek_0184",
+     "speaker": "Andrea"
+    },
+    {
+     "label": "Andreas (male, DE) · mediathek_0047",
+     "subfolder": "mediathek_0047",
+     "speaker": "Andreas"
+    },
+    {
+     "label": "Andrew (male, EN) · emolia_c0461",
+     "subfolder": "emolia_c0461",
+     "speaker": "Andrew"
+    },
+    {
+     "label": "Angelika (female, DE) · mediathek_0345",
+     "subfolder": "mediathek_0345",
+     "speaker": "Angelika"
+    },
+    {
+     "label": "Anna (female, DE) · mediathek_0006",
+     "subfolder": "mediathek_0006",
+     "speaker": "Anna"
+    },
+    {
+     "label": "Annabel (female, EN) · refvoice_0162",
+     "subfolder": "refvoice_0162",
+     "speaker": "Annabel"
+    },
+    {
+     "label": "Annegret (female, DE) · mediathek_0465",
+     "subfolder": "mediathek_0465",
+     "speaker": "Annegret"
+    },
+    {
+     "label": "Annika (female, DE) · mediathek_0253",
+     "subfolder": "mediathek_0253",
+     "speaker": "Annika"
+    },
+    {
+     "label": "Anthony (male, EN) · emolia_c0216",
+     "subfolder": "emolia_c0216",
+     "speaker": "Anthony"
+    },
+    {
+     "label": "Antje (female, DE) · mediathek_0284",
+     "subfolder": "mediathek_0284",
+     "speaker": "Antje"
+    },
+    {
+     "label": "Aria (female, EN) · emolia_c0240",
+     "subfolder": "emolia_c0240",
+     "speaker": "Aria"
+    },
+    {
+     "label": "Ariel (?, EN) · k501_age4_bg1",
+     "subfolder": "k501_age4_bg1",
+     "speaker": "Ariel"
+    },
+    {
+     "label": "Arthur (male, EN) · emolia_c1821",
+     "subfolder": "emolia_c1821",
+     "speaker": "Arthur"
+    },
+    {
+     "label": "Aubrey (?, EN) · k504_age5_bg1",
+     "subfolder": "k504_age5_bg1",
+     "speaker": "Aubrey"
+    },
+    {
+     "label": "Austin (male, EN) · emolia_c1780",
+     "subfolder": "emolia_c1780",
+     "speaker": "Austin"
+    },
+    {
+     "label": "Avery (?, EN) · emolia_c0362",
+     "subfolder": "emolia_c0362",
+     "speaker": "Avery"
+    },
+    {
+     "label": "Bailey (?, EN) · k515_age2_bg1",
+     "subfolder": "k515_age2_bg1",
+     "speaker": "Bailey"
+    },
+    {
+     "label": "Barbara (female, EN) · emolia_c1122",
+     "subfolder": "emolia_c1122",
+     "speaker": "Barbara"
+    },
+    {
+     "label": "Barnabas (male, EN) · k69_age2_bg1",
+     "subfolder": "k69_age2_bg1",
+     "speaker": "Barnabas"
+    },
+    {
+     "label": "Barnaby (male, EN) · emolia_c2253",
+     "subfolder": "emolia_c2253",
+     "speaker": "Barnaby"
+    },
+    {
+     "label": "Bartholomew (male, EN) · emolia_c2936",
+     "subfolder": "emolia_c2936",
+     "speaker": "Bartholomew"
+    },
+    {
+     "label": "Bastian (male, DE) · mediathek_0478",
+     "subfolder": "mediathek_0478",
+     "speaker": "Bastian"
+    },
+    {
+     "label": "Beate (female, DE) · mediathek_0382",
+     "subfolder": "mediathek_0382",
+     "speaker": "Beate"
+    },
+    {
+     "label": "Beatrice (female, EN) · emolia_c2512",
+     "subfolder": "emolia_c2512",
+     "speaker": "Beatrice"
+    },
+    {
+     "label": "Bene (?, DE) · mediathek_0403",
+     "subfolder": "mediathek_0403",
+     "speaker": "Bene"
+    },
+    {
+     "label": "Benjamin (male, EN) · emolia_c0941",
+     "subfolder": "emolia_c0941",
+     "speaker": "Benjamin"
+    },
+    {
+     "label": "Bernadette (female, EN) · k322_age3_bg1",
+     "subfolder": "k322_age3_bg1",
+     "speaker": "Bernadette"
+    },
+    {
+     "label": "Bernard (male, EN) · k375_age3_bg1",
+     "subfolder": "k375_age3_bg1",
+     "speaker": "Bernard"
+    },
+    {
+     "label": "Bernd (male, DE) · mediathek_0194",
+     "subfolder": "mediathek_0194",
+     "speaker": "Bernd"
+    },
+    {
+     "label": "Bettina (female, DE) · mediathek_0301",
+     "subfolder": "mediathek_0301",
+     "speaker": "Bettina"
+    },
+    {
+     "label": "Bianca (female, EN) · refvoice_0404",
+     "subfolder": "refvoice_0404",
+     "speaker": "Bianca"
+    },
+    {
+     "label": "Billie (?, EN) · k540_age3_bg1",
+     "subfolder": "k540_age3_bg1",
+     "speaker": "Billie"
+    },
+    {
+     "label": "Birgit (female, DE) · mediathek_0087",
+     "subfolder": "mediathek_0087",
+     "speaker": "Birgit"
+    },
+    {
+     "label": "Blake (?, EN) · emolia_c1842",
+     "subfolder": "emolia_c1842",
+     "speaker": "Blake"
+    },
+    {
+     "label": "Bobbie (?, EN) · k555_age5_bg1",
+     "subfolder": "k555_age5_bg1",
+     "speaker": "Bobbie"
+    },
+    {
+     "label": "Brandon (male, EN) · emolia_c0916",
+     "subfolder": "emolia_c0916",
+     "speaker": "Brandon"
+    },
+    {
+     "label": "Brett (?, EN) · k557_age4_bg1",
+     "subfolder": "k557_age4_bg1",
+     "speaker": "Brett"
+    },
+    {
+     "label": "Brian (male, EN) · emolia_c0583",
+     "subfolder": "emolia_c0583",
+     "speaker": "Brian"
+    },
+    {
+     "label": "Bridget (female, EN) · emolia_c2079",
+     "subfolder": "emolia_c2079",
+     "speaker": "Bridget"
+    },
+    {
+     "label": "Brigitte (female, DE) · mediathek_0236",
+     "subfolder": "mediathek_0236",
+     "speaker": "Brigitte"
+    },
+    {
+     "label": "Britt (?, EN) · k561_age4_bg1",
+     "subfolder": "k561_age4_bg1",
+     "speaker": "Britt"
+    },
+    {
+     "label": "Bryan (male, EN) · emolia_c1915",
+     "subfolder": "emolia_c1915",
+     "speaker": "Bryan"
+    },
+    {
+     "label": "Caleb (male, EN) · k70_age2_bg0",
+     "subfolder": "k70_age2_bg0",
+     "speaker": "Caleb"
+    },
+    {
+     "label": "Cameron (?, EN) · emolia_c1866",
+     "subfolder": "emolia_c1866",
+     "speaker": "Cameron"
+    },
+    {
+     "label": "Camilla (female, EN) · k343_age5_bg1",
+     "subfolder": "k343_age5_bg1",
+     "speaker": "Camilla"
+    },
+    {
+     "label": "Carl (male, EN) · emolia_c1796",
+     "subfolder": "emolia_c1796",
+     "speaker": "Carl"
+    },
+    {
+     "label": "Carol (female, EN) · emolia_c1354",
+     "subfolder": "emolia_c1354",
+     "speaker": "Carol"
+    },
+    {
+     "label": "Carson (?, EN) · emolia_c1916",
+     "subfolder": "emolia_c1916",
+     "speaker": "Carson"
+    },
+    {
+     "label": "Casey (?, EN) · emolia_c0323",
+     "subfolder": "emolia_c0323",
+     "speaker": "Casey"
+    },
+    {
+     "label": "Cecilia (female, EN) · emolia_c2541",
+     "subfolder": "emolia_c2541",
+     "speaker": "Cecilia"
+    },
+    {
+     "label": "Cedric (male, EN) · k390_age3_bg0",
+     "subfolder": "k390_age3_bg0",
+     "speaker": "Cedric"
+    },
+    {
+     "label": "Charles (male, EN) · emolia_c0137",
+     "subfolder": "emolia_c0137",
+     "speaker": "Charles"
+    },
+    {
+     "label": "Charlie (?, DE) · mediathek_0486",
+     "subfolder": "mediathek_0486",
+     "speaker": "Charlie"
+    },
+    {
+     "label": "Charlotte (female, EN) · anime_111",
+     "subfolder": "anime_111",
+     "speaker": "Charlotte"
+    },
+    {
+     "label": "Chloe (female, EN) · emolia_c0064",
+     "subfolder": "emolia_c0064",
+     "speaker": "Chloe"
+    },
+    {
+     "label": "Chris (?, DE) · mediathek_0468",
+     "subfolder": "mediathek_0468",
+     "speaker": "Chris"
+    },
+    {
+     "label": "Christian (male, EN) · emolia_c1555",
+     "subfolder": "emolia_c1555",
+     "speaker": "Christian"
+    },
+    {
+     "label": "Christiane (female, DE) · mediathek_0341",
+     "subfolder": "mediathek_0341",
+     "speaker": "Christiane"
+    },
+    {
+     "label": "Christopher (male, EN) · emolia_c0142",
+     "subfolder": "emolia_c0142",
+     "speaker": "Christopher"
+    },
+    {
+     "label": "Clara (female, EN) · emolia_c0456",
+     "subfolder": "emolia_c0456",
+     "speaker": "Clara"
+    },
+    {
+     "label": "Claudia (female, DE) · mediathek_0098",
+     "subfolder": "mediathek_0098",
+     "speaker": "Claudia"
+    },
+    {
+     "label": "Clifford (male, EN) · emolia_c2296",
+     "subfolder": "emolia_c2296",
+     "speaker": "Clifford"
+    },
+    {
+     "label": "Colleen (female, EN) · emolia_c2216",
+     "subfolder": "emolia_c2216",
+     "speaker": "Colleen"
+    },
+    {
+     "label": "Constance (female, EN) · emolia_c2399",
+     "subfolder": "emolia_c2399",
+     "speaker": "Constance"
+    },
+    {
+     "label": "Corey (?, EN) · k562_age3_bg1",
+     "subfolder": "k562_age3_bg1",
+     "speaker": "Corey"
+    },
+    {
+     "label": "Corinna (female, DE) · mediathek_0313",
+     "subfolder": "mediathek_0313",
+     "speaker": "Corinna"
+    },
+    {
+     "label": "Cornelia (female, DE) · mediathek_0429",
+     "subfolder": "mediathek_0429",
+     "speaker": "Cornelia"
+    },
+    {
+     "label": "Cornelius (male, EN) · emolia_c2958",
+     "subfolder": "emolia_c2958",
+     "speaker": "Cornelius"
+    },
+    {
+     "label": "Courtney (?, EN) · k562_age4_bg1",
+     "subfolder": "k562_age4_bg1",
+     "speaker": "Courtney"
+    },
+    {
+     "label": "Dagmar (female, DE) · mediathek_0388",
+     "subfolder": "mediathek_0388",
+     "speaker": "Dagmar"
+    },
+    {
+     "label": "Dakota (?, EN) · emolia_c2112",
+     "subfolder": "emolia_c2112",
+     "speaker": "Dakota"
+    },
+    {
+     "label": "Dana (?, EN) · k563_age2_bg1",
+     "subfolder": "k563_age2_bg1",
+     "speaker": "Dana"
+    },
+    {
+     "label": "Dani (?, EN) · k64_age2_bg1",
+     "subfolder": "k64_age2_bg1",
+     "speaker": "Dani"
+    },
+    {
+     "label": "Daniel (male, EN) · emolia_c0155",
+     "subfolder": "emolia_c0155",
+     "speaker": "Daniel"
+    },
+    {
+     "label": "Darcy (?, EN) · k71_age4_bg1",
+     "subfolder": "k71_age4_bg1",
+     "speaker": "Darcy"
+    },
+    {
+     "label": "David (male, EN) · emolia_c0029",
+     "subfolder": "emolia_c0029",
+     "speaker": "David"
+    },
+    {
+     "label": "Deborah (female, EN) · k346_age3_bg1",
+     "subfolder": "k346_age3_bg1",
+     "speaker": "Deborah"
+    },
+    {
+     "label": "Delilah (female, EN) · emolia_c2666",
+     "subfolder": "emolia_c2666",
+     "speaker": "Delilah"
+    },
+    {
+     "label": "Dennis (male, EN) · emolia_c1054",
+     "subfolder": "emolia_c1054",
+     "speaker": "Dennis"
+    },
+    {
+     "label": "Desmond (male, EN) · emolia_c2251",
+     "subfolder": "emolia_c2251",
+     "speaker": "Desmond"
+    },
+    {
+     "label": "Detlef (male, DE) · mediathek_0198",
+     "subfolder": "mediathek_0198",
+     "speaker": "Detlef"
+    },
+    {
+     "label": "Devon (?, EN) · emolia_c2142",
+     "subfolder": "emolia_c2142",
+     "speaker": "Devon"
+    },
+    {
+     "label": "Diane (female, EN) · emolia_c1699",
+     "subfolder": "emolia_c1699",
+     "speaker": "Diane"
+    },
+    {
+     "label": "Dieter (male, DE) · mediathek_0148",
+     "subfolder": "mediathek_0148",
+     "speaker": "Dieter"
+    },
+    {
+     "label": "Dominic (male, EN) · k395_age3_bg1",
+     "subfolder": "k395_age3_bg1",
+     "speaker": "Dominic"
+    },
+    {
+     "label": "Donald (male, EN) · emolia_c0315",
+     "subfolder": "emolia_c0315",
+     "speaker": "Donald"
+    },
+    {
+     "label": "Doris (female, DE) · mediathek_0347",
+     "subfolder": "mediathek_0347",
+     "speaker": "Doris"
+    },
+    {
+     "label": "Dorothy (female, EN) · emolia_c1117",
+     "subfolder": "emolia_c1117",
+     "speaker": "Dorothy"
+    },
+    {
+     "label": "Douglas (male, EN) · emolia_c1271",
+     "subfolder": "emolia_c1271",
+     "speaker": "Douglas"
+    },
+    {
+     "label": "Drew (?, EN) · emolia_c2151",
+     "subfolder": "emolia_c2151",
+     "speaker": "Drew"
+    },
+    {
+     "label": "Duncan (male, EN) · emolia_c2305",
+     "subfolder": "emolia_c2305",
+     "speaker": "Duncan"
+    },
+    {
+     "label": "Dylan (male, EN) · emolia_c1865",
+     "subfolder": "emolia_c1865",
+     "speaker": "Dylan"
+    },
+    {
+     "label": "Eden (?, EN) · k74_age6_bg1",
+     "subfolder": "k74_age6_bg1",
+     "speaker": "Eden"
+    },
+    {
+     "label": "Edith (female, EN) · k392_age2_bg1",
+     "subfolder": "k392_age2_bg1",
+     "speaker": "Edith"
+    },
+    {
+     "label": "Edmund (male, EN) · emolia_c2322",
+     "subfolder": "emolia_c2322",
+     "speaker": "Edmund"
+    },
+    {
+     "label": "Edward (male, EN) · emolia_c0678",
+     "subfolder": "emolia_c0678",
+     "speaker": "Edward"
+    },
+    {
+     "label": "Eike (?, DE) · mediathek_0084",
+     "subfolder": "mediathek_0084",
+     "speaker": "Eike"
+    },
+    {
+     "label": "Eleanor (female, EN) · emolia_c0421",
+     "subfolder": "emolia_c0421",
+     "speaker": "Eleanor"
+    },
+    {
+     "label": "Elia (?, DE) · mediathek_0312",
+     "subfolder": "mediathek_0312",
+     "speaker": "Elia"
+    },
+    {
+     "label": "Elijah (male, EN) · emolia_c2154",
+     "subfolder": "emolia_c2154",
+     "speaker": "Elijah"
+    },
+    {
+     "label": "Elke (female, DE) · mediathek_0275",
+     "subfolder": "mediathek_0275",
+     "speaker": "Elke"
+    },
+    {
+     "label": "Elliot (?, EN) · k89_age4_bg0",
+     "subfolder": "k89_age4_bg0",
+     "speaker": "Elliot"
+    },
+    {
+     "label": "Ellis (?, EN) · emolia_c2162",
+     "subfolder": "emolia_c2162",
+     "speaker": "Ellis"
+    },
+    {
+     "label": "Emerson (?, EN) · emolia_c0989",
+     "subfolder": "emolia_c0989",
+     "speaker": "Emerson"
+    },
+    {
+     "label": "Emil (male, DE) · mediathek_0449",
+     "subfolder": "mediathek_0449",
+     "speaker": "Emil"
+    },
+    {
+     "label": "Emily (female, EN) · anime_212",
+     "subfolder": "anime_212",
+     "speaker": "Emily"
+    },
+    {
+     "label": "Emma (female, EN) · anime_000",
+     "subfolder": "anime_000",
+     "speaker": "Emma"
+    },
+    {
+     "label": "Emmett (male, EN) · k398_age3_bg1",
+     "subfolder": "k398_age3_bg1",
+     "speaker": "Emmett"
+    },
+    {
+     "label": "Emory (?, EN) · k91_age5_bg0",
+     "subfolder": "k91_age5_bg0",
+     "speaker": "Emory"
+    },
+    {
+     "label": "Eric (male, EN) · emolia_c0801",
+     "subfolder": "emolia_c0801",
+     "speaker": "Eric"
+    },
+    {
+     "label": "Erika (female, DE) · mediathek_0407",
+     "subfolder": "mediathek_0407",
+     "speaker": "Erika"
+    },
+    {
+     "label": "Esther (female, EN) · emolia_c2742",
+     "subfolder": "emolia_c2742",
+     "speaker": "Esther"
+    },
+    {
+     "label": "Ethan (male, EN) · emolia_c1411",
+     "subfolder": "emolia_c1411",
+     "speaker": "Ethan"
+    },
+    {
+     "label": "Eugene (male, EN) · emolia_c2084",
+     "subfolder": "emolia_c2084",
+     "speaker": "Eugene"
+    },
+    {
+     "label": "Evelyn (female, EN) · anime_168",
+     "subfolder": "anime_168",
+     "speaker": "Evelyn"
+    },
+    {
+     "label": "Everett (male, EN) · emolia_c2960",
+     "subfolder": "emolia_c2960",
+     "speaker": "Everett"
+    },
+    {
+     "label": "Ezra (male, EN) · k71_age3_bg1",
+     "subfolder": "k71_age3_bg1",
+     "speaker": "Ezra"
+    },
+    {
+     "label": "Fabian (male, EN) · k86_age3_bg1",
+     "subfolder": "k86_age3_bg1",
+     "speaker": "Fabian"
+    },
+    {
+     "label": "Felicity (female, EN) · emolia_c2427",
+     "subfolder": "emolia_c2427",
+     "speaker": "Felicity"
+    },
+    {
+     "label": "Felix (male, DE) · mediathek_0027",
+     "subfolder": "mediathek_0027",
+     "speaker": "Felix"
+    },
+    {
+     "label": "Ferdinand (male, EN) · k131_age2_bg1",
+     "subfolder": "k131_age2_bg1",
+     "speaker": "Ferdinand"
+    },
+    {
+     "label": "Fergus (male, EN) · emolia_c2343",
+     "subfolder": "emolia_c2343",
+     "speaker": "Fergus"
+    },
+    {
+     "label": "Finley (?, EN) · emolia_c1028",
+     "subfolder": "emolia_c1028",
+     "speaker": "Finley"
+    },
+    {
+     "label": "Fiona (female, EN) · emolia_c2783",
+     "subfolder": "emolia_c2783",
+     "speaker": "Fiona"
+    },
+    {
+     "label": "Florence (female, EN) · k402_age2_bg1",
+     "subfolder": "k402_age2_bg1",
+     "speaker": "Florence"
+    },
+    {
+     "label": "Florian (male, DE) · mediathek_0350",
+     "subfolder": "mediathek_0350",
+     "speaker": "Florian"
+    },
+    {
+     "label": "Flynn (?, EN) · refvoice_0080",
+     "subfolder": "refvoice_0080",
+     "speaker": "Flynn"
+    },
+    {
+     "label": "Frank (male, EN) · emolia_c1009",
+     "subfolder": "emolia_c1009",
+     "speaker": "Frank"
+    },
+    {
+     "label": "Frankie (?, EN) · emolia_c2198",
+     "subfolder": "emolia_c2198",
+     "speaker": "Frankie"
+    },
+    {
+     "label": "Franklin (male, EN) · k404_age2_bg0",
+     "subfolder": "k404_age2_bg0",
+     "speaker": "Franklin"
+    },
+    {
+     "label": "Franziska (female, DE) · mediathek_0125",
+     "subfolder": "mediathek_0125",
+     "speaker": "Franziska"
+    },
+    {
+     "label": "Frieda (female, DE) · mediathek_0402",
+     "subfolder": "mediathek_0402",
+     "speaker": "Frieda"
+    },
+    {
+     "label": "Friedrich (male, DE) · mediathek_0320",
+     "subfolder": "mediathek_0320",
+     "speaker": "Friedrich"
+    },
+    {
+     "label": "Gabriel (male, EN) · emolia_c1954",
+     "subfolder": "emolia_c1954",
+     "speaker": "Gabriel"
+    },
+    {
+     "label": "Gary (male, EN) · emolia_c0770",
+     "subfolder": "emolia_c0770",
+     "speaker": "Gary"
+    },
+    {
+     "label": "Genevieve (female, EN) · emolia_c2846",
+     "subfolder": "emolia_c2846",
+     "speaker": "Genevieve"
+    },
+    {
+     "label": "George (male, EN) · emolia_c0587",
+     "subfolder": "emolia_c0587",
+     "speaker": "George"
+    },
+    {
+     "label": "Georgie (?, EN) · refvoice_0133",
+     "subfolder": "refvoice_0133",
+     "speaker": "Georgie"
+    },
+    {
+     "label": "Georgina (female, EN) · k40_age3_bg1",
+     "subfolder": "k40_age3_bg1",
+     "speaker": "Georgina"
+    },
+    {
+     "label": "Gerald (male, EN) · emolia_c1709",
+     "subfolder": "emolia_c1709",
+     "speaker": "Gerald"
+    },
+    {
+     "label": "Gerhard (male, DE) · mediathek_0291",
+     "subfolder": "mediathek_0291",
+     "speaker": "Gerhard"
+    },
+    {
+     "label": "Gertrud (female, DE) · mediathek_0489",
+     "subfolder": "mediathek_0489",
+     "speaker": "Gertrud"
+    },
+    {
+     "label": "Gideon (male, EN) · k131_age4_bg1",
+     "subfolder": "k131_age4_bg1",
+     "speaker": "Gideon"
+    },
+    {
+     "label": "Giles (male, EN) · k90_age3_bg1",
+     "subfolder": "k90_age3_bg1",
+     "speaker": "Giles"
+    },
+    {
+     "label": "Gisela (female, DE) · mediathek_0223",
+     "subfolder": "mediathek_0223",
+     "speaker": "Gisela"
+    },
+    {
+     "label": "Gloria (female, EN) · emolia_c1880",
+     "subfolder": "emolia_c1880",
+     "speaker": "Gloria"
+    },
+    {
+     "label": "Grace (female, EN) · anime_226",
+     "subfolder": "anime_226",
+     "speaker": "Grace"
+    },
+    {
+     "label": "Graham (male, EN) · emolia_c2355",
+     "subfolder": "emolia_c2355",
+     "speaker": "Graham"
+    },
+    {
+     "label": "Gray (?, EN) · emolia_c2234",
+     "subfolder": "emolia_c2234",
+     "speaker": "Gray"
+    },
+    {
+     "label": "Gregory (male, EN) · emolia_c0965",
+     "subfolder": "emolia_c0965",
+     "speaker": "Gregory"
+    },
+    {
+     "label": "Greta (female, DE) · mediathek_0178",
+     "subfolder": "mediathek_0178",
+     "speaker": "Greta"
+    },
+    {
+     "label": "Gudrun (female, DE) · mediathek_0352",
+     "subfolder": "mediathek_0352",
+     "speaker": "Gudrun"
+    },
+    {
+     "label": "Gwendolyn (female, EN) · emolia_c2332",
+     "subfolder": "emolia_c2332",
+     "speaker": "Gwendolyn"
+    },
+    {
+     "label": "Günther (male, DE) · mediathek_0170",
+     "subfolder": "mediathek_0170",
+     "speaker": "Günther"
+    },
+    {
+     "label": "Hannah (female, EN) · emolia_c0227",
+     "subfolder": "emolia_c0227",
+     "speaker": "Hannah"
+    },
+    {
+     "label": "Hannelore (female, DE) · mediathek_0324",
+     "subfolder": "mediathek_0324",
+     "speaker": "Hannelore"
+    },
+    {
+     "label": "Hannes (male, DE) · mediathek_0326",
+     "subfolder": "mediathek_0326",
+     "speaker": "Hannes"
+    },
+    {
+     "label": "Harold (male, EN) · emolia_c1728",
+     "subfolder": "emolia_c1728",
+     "speaker": "Harold"
+    },
+    {
+     "label": "Harper (?, EN) · emolia_c1042",
+     "subfolder": "emolia_c1042",
+     "speaker": "Harper"
+    },
+    {
+     "label": "Harriet (female, EN) · anime_152",
+     "subfolder": "anime_152",
+     "speaker": "Harriet"
+    },
+    {
+     "label": "Hartmut (male, DE) · mediathek_0180",
+     "subfolder": "mediathek_0180",
+     "speaker": "Hartmut"
+    },
+    {
+     "label": "Hayden (?, EN) · emolia_c1044",
+     "subfolder": "emolia_c1044",
+     "speaker": "Hayden"
+    },
+    {
+     "label": "Hazel (female, EN) · emolia_c0635",
+     "subfolder": "emolia_c0635",
+     "speaker": "Hazel"
+    },
+    {
+     "label": "Hector (male, EN) · k97_age4_bg0",
+     "subfolder": "k97_age4_bg0",
+     "speaker": "Hector"
+    },
+    {
+     "label": "Hedwig (female, DE) · mediathek_0392",
+     "subfolder": "mediathek_0392",
+     "speaker": "Hedwig"
+    },
+    {
+     "label": "Heidi (female, DE) · mediathek_0490",
+     "subfolder": "mediathek_0490",
+     "speaker": "Heidi"
+    },
+    {
+     "label": "Heike (female, DE) · mediathek_0096",
+     "subfolder": "mediathek_0096",
+     "speaker": "Heike"
+    },
+    {
+     "label": "Helena (female, EN) · emolia_c2897",
+     "subfolder": "emolia_c2897",
+     "speaker": "Helena"
+    },
+    {
+     "label": "Helga (female, DE) · mediathek_0221",
+     "subfolder": "mediathek_0221",
+     "speaker": "Helga"
+    },
+    {
+     "label": "Helmut (male, DE) · mediathek_0169",
+     "subfolder": "mediathek_0169",
+     "speaker": "Helmut"
+    },
+    {
+     "label": "Henrietta (female, EN) · k436_age3_bg1",
+     "subfolder": "k436_age3_bg1",
+     "speaker": "Henrietta"
+    },
+    {
+     "label": "Henry (male, EN) · emolia_c1247",
+     "subfolder": "emolia_c1247",
+     "speaker": "Henry"
+    },
+    {
+     "label": "Hermann (male, DE) · mediathek_0493",
+     "subfolder": "mediathek_0493",
+     "speaker": "Hermann"
+    },
+    {
+     "label": "Holger (male, DE) · mediathek_0218",
+     "subfolder": "mediathek_0218",
+     "speaker": "Holger"
+    },
+    {
+     "label": "Hollis (?, EN) · emolia_c2260",
+     "subfolder": "emolia_c2260",
+     "speaker": "Hollis"
+    },
+    {
+     "label": "Horace (male, EN) · k132_age2_bg1",
+     "subfolder": "k132_age2_bg1",
+     "speaker": "Horace"
+    },
+    {
+     "label": "Horst (male, DE) · mediathek_0283",
+     "subfolder": "mediathek_0283",
+     "speaker": "Horst"
+    },
+    {
+     "label": "Hugh (male, EN) · emolia_c2356",
+     "subfolder": "emolia_c2356",
+     "speaker": "Hugh"
+    },
+    {
+     "label": "Humphrey (male, EN) · k41_age5_bg0",
+     "subfolder": "k41_age5_bg0",
+     "speaker": "Humphrey"
+    },
+    {
+     "label": "Hunter (?, EN) · refvoice_0246",
+     "subfolder": "refvoice_0246",
+     "speaker": "Hunter"
+    },
+    {
+     "label": "Ignatius (male, EN) · k135_age6_bg1",
+     "subfolder": "k135_age6_bg1",
+     "speaker": "Ignatius"
+    },
+    {
+     "label": "Ilona (female, DE) · mediathek_0437",
+     "subfolder": "mediathek_0437",
+     "speaker": "Ilona"
+    },
+    {
+     "label": "Imogen (female, EN) · emolia_c2439",
+     "subfolder": "emolia_c2439",
+     "speaker": "Imogen"
+    },
+    {
+     "label": "Indigo (?, EN) · emolia_c2435",
+     "subfolder": "emolia_c2435",
+     "speaker": "Indigo"
+    },
+    {
+     "label": "Ingeborg (female, EN) · refvoice_0838",
+     "subfolder": "refvoice_0838",
+     "speaker": "Ingeborg"
+    },
+    {
+     "label": "Ingrid (female, DE) · mediathek_0199",
+     "subfolder": "mediathek_0199",
+     "speaker": "Ingrid"
+    },
+    {
+     "label": "Iris (female, EN) · emolia_c0749",
+     "subfolder": "emolia_c0749",
+     "speaker": "Iris"
+    },
+    {
+     "label": "Isaac (male, EN) · refvoice_0070",
+     "subfolder": "refvoice_0070",
+     "speaker": "Isaac"
+    },
+    {
+     "label": "Isabella (female, EN) · anime_062",
+     "subfolder": "anime_062",
+     "speaker": "Isabella"
+    },
+    {
+     "label": "Isadora (female, EN) · k459_age2_bg1",
+     "subfolder": "k459_age2_bg1",
+     "speaker": "Isadora"
+    },
+    {
+     "label": "Isaiah (male, EN) · k463_age2_bg1",
+     "subfolder": "k463_age2_bg1",
+     "speaker": "Isaiah"
+    },
+    {
+     "label": "Ivan (male, EN) · emolia_c2401",
+     "subfolder": "emolia_c2401",
+     "speaker": "Ivan"
+    },
+    {
+     "label": "Ivy (female, EN) · emolia_c0693",
+     "subfolder": "emolia_c0693",
+     "speaker": "Ivy"
+    },
+    {
+     "label": "Jack (male, EN) · emolia_c1031",
+     "subfolder": "emolia_c1031",
+     "speaker": "Jack"
+    },
+    {
+     "label": "Jacob (male, EN) · emolia_c0769",
+     "subfolder": "emolia_c0769",
+     "speaker": "Jacob"
+    },
+    {
+     "label": "Jacqueline (female, EN) · k462_age2_bg1",
+     "subfolder": "k462_age2_bg1",
+     "speaker": "Jacqueline"
+    },
+    {
+     "label": "Jaden (?, EN) · refvoice_0264",
+     "subfolder": "refvoice_0264",
+     "speaker": "Jaden"
+    },
+    {
+     "label": "James (male, EN) · anime_016",
+     "subfolder": "anime_016",
+     "speaker": "James"
+    },
+    {
+     "label": "Jamie (?, EN) · emolia_c0043",
+     "subfolder": "emolia_c0043",
+     "speaker": "Jamie"
+    },
+    {
+     "label": "Jasmin (female, DE) · mediathek_0112",
+     "subfolder": "mediathek_0112",
+     "speaker": "Jasmin"
+    },
+    {
+     "label": "Jason (male, EN) · emolia_c0697",
+     "subfolder": "emolia_c0697",
+     "speaker": "Jason"
+    },
+    {
+     "label": "Jasper (male, EN) · k165_age3_bg1",
+     "subfolder": "k165_age3_bg1",
+     "speaker": "Jasper"
+    },
+    {
+     "label": "Jay (?, EN) · refvoice_0269",
+     "subfolder": "refvoice_0269",
+     "speaker": "Jay"
+    },
+    {
+     "label": "Jeffrey (male, EN) · emolia_c0730",
+     "subfolder": "emolia_c0730",
+     "speaker": "Jeffrey"
+    },
+    {
+     "label": "Jeremy (male, EN) · emolia_c1544",
+     "subfolder": "emolia_c1544",
+     "speaker": "Jeremy"
+    },
+    {
+     "label": "Jerome (male, EN) · k468_age2_bg0",
+     "subfolder": "k468_age2_bg0",
+     "speaker": "Jerome"
+    },
+    {
+     "label": "Jerry (male, EN) · emolia_c1056",
+     "subfolder": "emolia_c1056",
+     "speaker": "Jerry"
+    },
+    {
+     "label": "Jesse (?, EN) · emolia_c1047",
+     "subfolder": "emolia_c1047",
+     "speaker": "Jesse"
+    },
+    {
+     "label": "Jethro (male, EN) · refvoice_0138",
+     "subfolder": "refvoice_0138",
+     "speaker": "Jethro"
+    },
+    {
+     "label": "Joey (?, EN) · refvoice_0280",
+     "subfolder": "refvoice_0280",
+     "speaker": "Joey"
+    },
+    {
+     "label": "Johanna (female, DE) · mediathek_0145",
+     "subfolder": "mediathek_0145",
+     "speaker": "Johanna"
+    },
+    {
+     "label": "John (male, EN) · anime_088",
+     "subfolder": "anime_088",
+     "speaker": "John"
+    },
+    {
+     "label": "Jona (?, DE) · mediathek_0306",
+     "subfolder": "mediathek_0306",
+     "speaker": "Jona"
+    },
+    {
+     "label": "Jonas (male, DE) · mediathek_0013",
+     "subfolder": "mediathek_0013",
+     "speaker": "Jonas"
+    },
+    {
+     "label": "Jonathan (male, EN) · emolia_c0841",
+     "subfolder": "emolia_c0841",
+     "speaker": "Jonathan"
+    },
+    {
+     "label": "Jordan (?, EN) · emolia_c0086",
+     "subfolder": "emolia_c0086",
+     "speaker": "Jordan"
+    },
+    {
+     "label": "Joseph (male, EN) · emolia_c0039",
+     "subfolder": "emolia_c0039",
+     "speaker": "Joseph"
+    },
+    {
+     "label": "Josephine (female, EN) · emolia_c1072",
+     "subfolder": "emolia_c1072",
+     "speaker": "Josephine"
+    },
+    {
+     "label": "Joshua (male, EN) · emolia_c0469",
+     "subfolder": "emolia_c0469",
+     "speaker": "Joshua"
+    },
+    {
+     "label": "Judith (female, EN) · emolia_c1776",
+     "subfolder": "emolia_c1776",
+     "speaker": "Judith"
+    },
+    {
+     "label": "Jules (?, EN) · emolia_c2496",
+     "subfolder": "emolia_c2496",
+     "speaker": "Jules"
+    },
+    {
+     "label": "Julia (female, DE) · mediathek_0025",
+     "subfolder": "mediathek_0025",
+     "speaker": "Julia"
+    },
+    {
+     "label": "Julian (male, EN) · emolia_c2469",
+     "subfolder": "emolia_c2469",
+     "speaker": "Julian"
+    },
+    {
+     "label": "Juliet (female, EN) · emolia_c2911",
+     "subfolder": "emolia_c2911",
+     "speaker": "Juliet"
+    },
+    {
+     "label": "Justice (?, EN) · refvoice_0397",
+     "subfolder": "refvoice_0397",
+     "speaker": "Justice"
+    },
+    {
+     "label": "Justin (male, EN) · emolia_c0897",
+     "subfolder": "emolia_c0897",
+     "speaker": "Justin"
+    },
+    {
+     "label": "Jürgen (male, DE) · mediathek_0105",
+     "subfolder": "mediathek_0105",
+     "speaker": "Jürgen"
+    },
+    {
+     "label": "Kai (?, DE) · mediathek_0138",
+     "subfolder": "mediathek_0138",
+     "speaker": "Kai"
+    },
+    {
+     "label": "Karin (female, DE) · mediathek_0375",
+     "subfolder": "mediathek_0375",
+     "speaker": "Karin"
+    },
+    {
+     "label": "Katherine (female, EN) · k10_age3_bg1",
+     "subfolder": "k10_age3_bg1",
+     "speaker": "Katherine"
+    },
+    {
+     "label": "Kathleen (female, EN) · k470_age2_bg2",
+     "subfolder": "k470_age2_bg2",
+     "speaker": "Kathleen"
+    },
+    {
+     "label": "Katrin (female, DE) · mediathek_0056",
+     "subfolder": "mediathek_0056",
+     "speaker": "Katrin"
+    },
+    {
+     "label": "Keith (male, EN) · emolia_c1576",
+     "subfolder": "emolia_c1576",
+     "speaker": "Keith"
+    },
+    {
+     "label": "Kelly (?, EN) · emolia_c2675",
+     "subfolder": "emolia_c2675",
+     "speaker": "Kelly"
+    },
+    {
+     "label": "Kendall (?, EN) · emolia_c1058",
+     "subfolder": "emolia_c1058",
+     "speaker": "Kendall"
+    },
+    {
+     "label": "Kendrick (male, EN) · k47_age4_bg1",
+     "subfolder": "k47_age4_bg1",
+     "speaker": "Kendrick"
+    },
+    {
+     "label": "Kennedy (?, EN) · refvoice_0560",
+     "subfolder": "refvoice_0560",
+     "speaker": "Kennedy"
+    },
+    {
+     "label": "Kenneth (male, EN) · emolia_c0488",
+     "subfolder": "emolia_c0488",
+     "speaker": "Kenneth"
+    },
+    {
+     "label": "Kerry (?, EN) · emolia_c2716",
+     "subfolder": "emolia_c2716",
+     "speaker": "Kerry"
+    },
+    {
+     "label": "Kerstin (female, DE) · mediathek_0295",
+     "subfolder": "mediathek_0295",
+     "speaker": "Kerstin"
+    },
+    {
+     "label": "Kevin (male, EN) · emolia_c0547",
+     "subfolder": "emolia_c0547",
+     "speaker": "Kevin"
+    },
+    {
+     "label": "Kilian (male, DE) · mediathek_0419",
+     "subfolder": "mediathek_0419",
+     "speaker": "Kilian"
+    },
+    {
+     "label": "Kim (?, DE) · mediathek_0026",
+     "subfolder": "mediathek_0026",
+     "speaker": "Kim"
+    },
+    {
+     "label": "Kingsley (male, EN) · k166_age2_bg1",
+     "subfolder": "k166_age2_bg1",
+     "speaker": "Kingsley"
+    },
+    {
+     "label": "Kirby (?, EN) · refvoice_0786",
+     "subfolder": "refvoice_0786",
+     "speaker": "Kirby"
+    },
+    {
+     "label": "Klaus (male, DE) · mediathek_0133",
+     "subfolder": "mediathek_0133",
+     "speaker": "Klaus"
+    },
+    {
+     "label": "Konrad (male, DE) · mediathek_0441",
+     "subfolder": "mediathek_0441",
+     "speaker": "Konrad"
+    },
+    {
+     "label": "Kyle (male, EN) · emolia_c1389",
+     "subfolder": "emolia_c1389",
+     "speaker": "Kyle"
+    },
+    {
+     "label": "Lane (?, EN) · emolia_c2850",
+     "subfolder": "emolia_c2850",
+     "speaker": "Lane"
+    },
+    {
+     "label": "Larry (male, EN) · emolia_c0862",
+     "subfolder": "emolia_c0862",
+     "speaker": "Larry"
+    },
+    {
+     "label": "Laura (female, DE) · mediathek_0051",
+     "subfolder": "mediathek_0051",
+     "speaker": "Laura"
+    },
+    {
+     "label": "Laurel (female, EN) · emolia_c1687",
+     "subfolder": "emolia_c1687",
+     "speaker": "Laurel"
+    },
+    {
+     "label": "Lawrence (male, EN) · emolia_c1852",
+     "subfolder": "emolia_c1852",
+     "speaker": "Lawrence"
+    },
+    {
+     "label": "Lee (?, EN) · k112_age3_bg1",
+     "subfolder": "k112_age3_bg1",
+     "speaker": "Lee"
+    },
+    {
+     "label": "Lena (female, DE) · mediathek_0018",
+     "subfolder": "mediathek_0018",
+     "speaker": "Lena"
+    },
+    {
+     "label": "Lennon (?, EN) · k116_age2_bg1",
+     "subfolder": "k116_age2_bg1",
+     "speaker": "Lennon"
+    },
+    {
+     "label": "Lennox (?, EN) · refvoice_0898",
+     "subfolder": "refvoice_0898",
+     "speaker": "Lennox"
+    },
+    {
+     "label": "Leonard (male, EN) · emolia_c2508",
+     "subfolder": "emolia_c2508",
+     "speaker": "Leonard"
+    },
+    {
+     "label": "Leopold (male, EN) · k505_age2_bg0",
+     "subfolder": "k505_age2_bg0",
+     "speaker": "Leopold"
+    },
+    {
+     "label": "Leslie (?, EN) · k115_age4_bg1",
+     "subfolder": "k115_age4_bg1",
+     "speaker": "Leslie"
+    },
+    {
+     "label": "Lily (female, EN) · emolia_c0238",
+     "subfolder": "emolia_c0238",
+     "speaker": "Lily"
+    },
+    {
+     "label": "Linda (female, EN) · emolia_c1207",
+     "subfolder": "emolia_c1207",
+     "speaker": "Linda"
+    },
+    {
+     "label": "Lionel (male, EN) · refvoice_0147",
+     "subfolder": "refvoice_0147",
+     "speaker": "Lionel"
+    },
+    {
+     "label": "Logan (?, EN) · emolia_c1086",
+     "subfolder": "emolia_c1086",
+     "speaker": "Logan"
+    },
+    {
+     "label": "Lorraine (female, EN) · k472_age2_bg1",
+     "subfolder": "k472_age2_bg1",
+     "speaker": "Lorraine"
+    },
+    {
+     "label": "Louis (male, EN) · emolia_c2231",
+     "subfolder": "emolia_c2231",
+     "speaker": "Louis"
+    },
+    {
+     "label": "Luca (?, DE) · mediathek_0139",
+     "subfolder": "mediathek_0139",
+     "speaker": "Luca"
+    },
+    {
+     "label": "Lucia (female, EN) · k115_age3_bg1",
+     "subfolder": "k115_age3_bg1",
+     "speaker": "Lucia"
+    },
+    {
+     "label": "Lucius (male, EN) · k173_age3_bg0",
+     "subfolder": "k173_age3_bg0",
+     "speaker": "Lucius"
+    },
+    {
+     "label": "Ludwig (male, DE) · mediathek_0430",
+     "subfolder": "mediathek_0430",
+     "speaker": "Ludwig"
+    },
+    {
+     "label": "Lukas (male, DE) · emolia_c2890",
+     "subfolder": "emolia_c2890",
+     "speaker": "Lukas"
+    },
+    {
+     "label": "Mackenzie (?, EN) · refvoice_0912",
+     "subfolder": "refvoice_0912",
+     "speaker": "Mackenzie"
+    },
+    {
+     "label": "Magnus (male, EN) · refvoice_0221",
+     "subfolder": "refvoice_0221",
+     "speaker": "Magnus"
+    },
+    {
+     "label": "Malcolm (male, EN) · emolia_c2545",
+     "subfolder": "emolia_c2545",
+     "speaker": "Malcolm"
+    },
+    {
+     "label": "Manfred (male, DE) · mediathek_0257",
+     "subfolder": "mediathek_0257",
+     "speaker": "Manfred"
+    },
+    {
+     "label": "Marcus (male, EN) · emolia_c2249",
+     "subfolder": "emolia_c2249",
+     "speaker": "Marcus"
+    },
+    {
+     "label": "Margaret (female, EN) · emolia_c1095",
+     "subfolder": "emolia_c1095",
+     "speaker": "Margaret"
+    },
+    {
+     "label": "Marguerite (female, EN) · k491_age3_bg1",
+     "subfolder": "k491_age3_bg1",
+     "speaker": "Marguerite"
+    },
+    {
+     "label": "Maria (female, DE) · mediathek_0048",
+     "subfolder": "mediathek_0048",
+     "speaker": "Maria"
+    },
+    {
+     "label": "Marianne (female, DE) · mediathek_0469",
+     "subfolder": "mediathek_0469",
+     "speaker": "Marianne"
+    },
+    {
+     "label": "Marilyn (female, EN) · emolia_c1827",
+     "subfolder": "emolia_c1827",
+     "speaker": "Marilyn"
+    },
+    {
+     "label": "Mark (male, EN) · emolia_c0241",
+     "subfolder": "emolia_c0241",
+     "speaker": "Mark"
+    },
+    {
+     "label": "Marlene (female, DE) · mediathek_0272",
+     "subfolder": "mediathek_0272",
+     "speaker": "Marlene"
+    },
+    {
+     "label": "Marley (?, EN) · emolia_c1111",
+     "subfolder": "emolia_c1111",
+     "speaker": "Marley"
+    },
+    {
+     "label": "Martina (female, DE) · mediathek_0380",
+     "subfolder": "mediathek_0380",
+     "speaker": "Martina"
+    },
+    {
+     "label": "Matilda (female, EN) · emolia_c2465",
+     "subfolder": "emolia_c2465",
+     "speaker": "Matilda"
+    },
+    {
+     "label": "Matthew (male, EN) · emolia_c0213",
+     "subfolder": "emolia_c0213",
+     "speaker": "Matthew"
+    },
+    {
+     "label": "Matthias (male, DE) · mediathek_0035",
+     "subfolder": "mediathek_0035",
+     "speaker": "Matthias"
+    },
+    {
+     "label": "Maxi (?, DE) · mediathek_0376",
+     "subfolder": "mediathek_0376",
+     "speaker": "Maxi"
+    },
+    {
+     "label": "Meike (female, DE) · mediathek_0498",
+     "subfolder": "mediathek_0498",
+     "speaker": "Meike"
+    },
+    {
+     "label": "Melanie (female, DE) · mediathek_0116",
+     "subfolder": "mediathek_0116",
+     "speaker": "Melanie"
+    },
+    {
+     "label": "Meredith (female, EN) · k127_age2_bg1",
+     "subfolder": "k127_age2_bg1",
+     "speaker": "Meredith"
+    },
+    {
+     "label": "Merle (?, EN) · refvoice_0945",
+     "subfolder": "refvoice_0945",
+     "speaker": "Merle"
+    },
+    {
+     "label": "Mia (female, EN) · anime_066",
+     "subfolder": "anime_066",
+     "speaker": "Mia"
+    },
+    {
+     "label": "Micah (?, EN) · k127_age3_bg1",
+     "subfolder": "k127_age3_bg1",
+     "speaker": "Micah"
+    },
+    {
+     "label": "Micha (?, DE) · mediathek_0072",
+     "subfolder": "mediathek_0072",
+     "speaker": "Micha"
+    },
+    {
+     "label": "Michael (male, DE) · mediathek_0102",
+     "subfolder": "mediathek_0102",
+     "speaker": "Michael"
+    },
+    {
+     "label": "Michelle (female, EN) · emolia_c1481",
+     "subfolder": "emolia_c1481",
+     "speaker": "Michelle"
+    },
+    {
+     "label": "Mika (?, DE) · mediathek_0364",
+     "subfolder": "mediathek_0364",
+     "speaker": "Mika"
+    },
+    {
+     "label": "Miriam (female, EN) · emolia_c2077",
+     "subfolder": "emolia_c2077",
+     "speaker": "Miriam"
+    },
+    {
+     "label": "Monika (female, DE) · mediathek_0073",
+     "subfolder": "mediathek_0073",
+     "speaker": "Monika"
+    },
+    {
+     "label": "Montgomery (male, EN) · k193_age2_bg1",
+     "subfolder": "k193_age2_bg1",
+     "speaker": "Montgomery"
+    },
+    {
+     "label": "Morgan (?, EN) · emolia_c0359",
+     "subfolder": "emolia_c0359",
+     "speaker": "Morgan"
+    },
+    {
+     "label": "Moritz (male, DE) · mediathek_0346",
+     "subfolder": "mediathek_0346",
+     "speaker": "Moritz"
+    },
+    {
+     "label": "Mortimer (male, EN) · k514_age3_bg1",
+     "subfolder": "k514_age3_bg1",
+     "speaker": "Mortimer"
+    },
+    {
+     "label": "Nadia (female, EN) · k127_age2_bg2",
+     "subfolder": "k127_age2_bg2",
+     "speaker": "Nadia"
+    },
+    {
+     "label": "Nadine (female, DE) · mediathek_0110",
+     "subfolder": "mediathek_0110",
+     "speaker": "Nadine"
+    },
+    {
+     "label": "Nancy (female, EN) · emolia_c1222",
+     "subfolder": "emolia_c1222",
+     "speaker": "Nancy"
+    },
+    {
+     "label": "Naomi (female, EN) · emolia_c0816",
+     "subfolder": "emolia_c0816",
+     "speaker": "Naomi"
+    },
+    {
+     "label": "Natalie (female, EN) · emolia_c0128",
+     "subfolder": "emolia_c0128",
+     "speaker": "Natalie"
+    },
+    {
+     "label": "Nathan (male, EN) · emolia_c1176",
+     "subfolder": "emolia_c1176",
+     "speaker": "Nathan"
+    },
+    {
+     "label": "Nathaniel (male, EN) · k209_age4_bg1",
+     "subfolder": "k209_age4_bg1",
+     "speaker": "Nathaniel"
+    },
+    {
+     "label": "Neville (male, EN) · refvoice_0412",
+     "subfolder": "refvoice_0412",
+     "speaker": "Neville"
+    },
+    {
+     "label": "Nicholas (male, EN) · emolia_c0771",
+     "subfolder": "emolia_c0771",
+     "speaker": "Nicholas"
+    },
+    {
+     "label": "Nicki (?, DE) · mediathek_0200",
+     "subfolder": "mediathek_0200",
+     "speaker": "Nicki"
+    },
+    {
+     "label": "Nicolette (female, EN) · k491_age5_bg1",
+     "subfolder": "k491_age5_bg1",
+     "speaker": "Nicolette"
+    },
+    {
+     "label": "Nigel (male, EN) · emolia_c2559",
+     "subfolder": "emolia_c2559",
+     "speaker": "Nigel"
+    },
+    {
+     "label": "Nikita (?, DE) · mediathek_0460",
+     "subfolder": "mediathek_0460",
+     "speaker": "Nikita"
+    },
+    {
+     "label": "Noa (?, DE) · mediathek_0332",
+     "subfolder": "mediathek_0332",
+     "speaker": "Noa"
+    },
+    {
+     "label": "Noah (male, EN) · emolia_c1515",
+     "subfolder": "emolia_c1515",
+     "speaker": "Noah"
+    },
+    {
+     "label": "Noel (?, EN) · k140_age4_bg1",
+     "subfolder": "k140_age4_bg1",
+     "speaker": "Noel"
+    },
+    {
+     "label": "Nora (female, EN) · emolia_c0243",
+     "subfolder": "emolia_c0243",
+     "speaker": "Nora"
+    },
+    {
+     "label": "Norbert (male, DE) · mediathek_0256",
+     "subfolder": "mediathek_0256",
+     "speaker": "Norbert"
+    },
+    {
+     "label": "Norman (male, EN) · k532_age3_bg1",
+     "subfolder": "k532_age3_bg1",
+     "speaker": "Norman"
+    },
+    {
+     "label": "Oakley (?, EN) · k189_age4_bg1",
+     "subfolder": "k189_age4_bg1",
+     "speaker": "Oakley"
+    },
+    {
+     "label": "Octavia (female, EN) · k510_age4_bg1",
+     "subfolder": "k510_age4_bg1",
+     "speaker": "Octavia"
+    },
+    {
+     "label": "Octavius (male, EN) · k255_age5_bg1",
+     "subfolder": "k255_age5_bg1",
+     "speaker": "Octavius"
+    },
+    {
+     "label": "Olivia (female, EN) · anime_031",
+     "subfolder": "anime_031",
+     "speaker": "Olivia"
+    },
+    {
+     "label": "Ophelia (female, EN) · k153_age2_bg1",
+     "subfolder": "k153_age2_bg1",
+     "speaker": "Ophelia"
+    },
+    {
+     "label": "Orson (male, EN) · refvoice_0542",
+     "subfolder": "refvoice_0542",
+     "speaker": "Orson"
+    },
+    {
+     "label": "Osborne (male, EN) · k536_age4_bg1",
+     "subfolder": "k536_age4_bg1",
+     "speaker": "Osborne"
+    },
+    {
+     "label": "Oscar (male, EN) · emolia_c2570",
+     "subfolder": "emolia_c2570",
+     "speaker": "Oscar"
+    },
+    {
+     "label": "Ottmar (male, DE) · mediathek_0303",
+     "subfolder": "mediathek_0303",
+     "speaker": "Ottmar"
+    },
+    {
+     "label": "Paris (?, EN) · k192_age3_bg1",
+     "subfolder": "k192_age3_bg1",
+     "speaker": "Paris"
+    },
+    {
+     "label": "Parker (?, EN) · emolia_c1256",
+     "subfolder": "emolia_c1256",
+     "speaker": "Parker"
+    },
+    {
+     "label": "Patricia (female, EN) · emolia_c1154",
+     "subfolder": "emolia_c1154",
+     "speaker": "Patricia"
+    },
+    {
+     "label": "Patrick (male, EN) · emolia_c0992",
+     "subfolder": "emolia_c0992",
+     "speaker": "Patrick"
+    },
+    {
+     "label": "Paul (male, EN) · emolia_c0436",
+     "subfolder": "emolia_c0436",
+     "speaker": "Paul"
+    },
+    {
+     "label": "Pauline (female, EN) · k534_age5_bg1",
+     "subfolder": "k534_age5_bg1",
+     "speaker": "Pauline"
+    },
+    {
+     "label": "Penelope (female, EN) · k170_age5_bg1",
+     "subfolder": "k170_age5_bg1",
+     "speaker": "Penelope"
+    },
+    {
+     "label": "Percival (male, EN) · emolia_c2593",
+     "subfolder": "emolia_c2593",
+     "speaker": "Percival"
+    },
+    {
+     "label": "Percy (male, EN) · k256_age2_bg0",
+     "subfolder": "k256_age2_bg0",
+     "speaker": "Percy"
+    },
+    {
+     "label": "Peter (male, EN) · emolia_c1349",
+     "subfolder": "emolia_c1349",
+     "speaker": "Peter"
+    },
+    {
+     "label": "Petra (female, DE) · mediathek_0070",
+     "subfolder": "mediathek_0070",
+     "speaker": "Petra"
+    },
+    {
+     "label": "Peyton (?, EN) · emolia_c0963",
+     "subfolder": "emolia_c0963",
+     "speaker": "Peyton"
+    },
+    {
+     "label": "Philip (male, EN) · emolia_c2241",
+     "subfolder": "emolia_c2241",
+     "speaker": "Philip"
+    },
+    {
+     "label": "Phoenix (?, EN) · emolia_c1430",
+     "subfolder": "emolia_c1430",
+     "speaker": "Phoenix"
+    },
+    {
+     "label": "Presley (?, EN) · k241_age4_bg1",
+     "subfolder": "k241_age4_bg1",
+     "speaker": "Presley"
+    },
+    {
+     "label": "Preston (male, EN) · k53_age4_bg0",
+     "subfolder": "k53_age4_bg0",
+     "speaker": "Preston"
+    },
+    {
+     "label": "Priscilla (female, EN) · emolia_c2025",
+     "subfolder": "emolia_c2025",
+     "speaker": "Priscilla"
+    },
+    {
+     "label": "Quentin (male, EN) · emolia_c2609",
+     "subfolder": "emolia_c2609",
+     "speaker": "Quentin"
+    },
+    {
+     "label": "Quincy (male, EN) · k258_age2_bg2",
+     "subfolder": "k258_age2_bg2",
+     "speaker": "Quincy"
+    },
+    {
+     "label": "Quinn (?, EN) · emolia_c0382",
+     "subfolder": "emolia_c0382",
+     "speaker": "Quinn"
+    },
+    {
+     "label": "Rainer (male, DE) · mediathek_0243",
+     "subfolder": "mediathek_0243",
+     "speaker": "Rainer"
+    },
+    {
+     "label": "Ralph (male, EN) · emolia_c2080",
+     "subfolder": "emolia_c2080",
+     "speaker": "Ralph"
+    },
+    {
+     "label": "Randall (male, EN) · emolia_c2081",
+     "subfolder": "emolia_c2081",
+     "speaker": "Randall"
+    },
+    {
+     "label": "Ray (?, EN) · k257_age3_bg1",
+     "subfolder": "k257_age3_bg1",
+     "speaker": "Ray"
+    },
+    {
+     "label": "Raymond (male, EN) · emolia_c1025",
+     "subfolder": "emolia_c1025",
+     "speaker": "Raymond"
+    },
+    {
+     "label": "Reagan (?, EN) · emolia_c1547",
+     "subfolder": "emolia_c1547",
+     "speaker": "Reagan"
+    },
+    {
+     "label": "Rebecca (female, EN) · emolia_c1598",
+     "subfolder": "emolia_c1598",
+     "speaker": "Rebecca"
+    },
+    {
+     "label": "Reese (?, EN) · emolia_c0767",
+     "subfolder": "emolia_c0767",
+     "speaker": "Reese"
+    },
+    {
+     "label": "Reginald (male, EN) · emolia_c2645",
+     "subfolder": "emolia_c2645",
+     "speaker": "Reginald"
+    },
+    {
+     "label": "Reinhard (male, DE) · mediathek_0181",
+     "subfolder": "mediathek_0181",
+     "speaker": "Reinhard"
+    },
+    {
+     "label": "Remy (?, EN) · emolia_c1580",
+     "subfolder": "emolia_c1580",
+     "speaker": "Remy"
+    },
+    {
+     "label": "Renate (female, DE) · mediathek_0233",
+     "subfolder": "mediathek_0233",
+     "speaker": "Renate"
+    },
+    {
+     "label": "Richard (male, EN) · emolia_c0033",
+     "subfolder": "emolia_c0033",
+     "speaker": "Richard"
+    },
+    {
+     "label": "Riley (?, EN) · emolia_c0330",
+     "subfolder": "emolia_c0330",
+     "speaker": "Riley"
+    },
+    {
+     "label": "River (?, EN) · emolia_c1582",
+     "subfolder": "emolia_c1582",
+     "speaker": "River"
+    },
+    {
+     "label": "Robbie (?, EN) · k311_age2_bg1",
+     "subfolder": "k311_age2_bg1",
+     "speaker": "Robbie"
+    },
+    {
+     "label": "Robert (male, EN) · anime_042",
+     "subfolder": "anime_042",
+     "speaker": "Robert"
+    },
+    {
+     "label": "Robin (?, DE) · mediathek_0474",
+     "subfolder": "mediathek_0474",
+     "speaker": "Robin"
+    },
+    {
+     "label": "Rodrigo (male, EN) · k550_age5_bg1",
+     "subfolder": "k550_age5_bg1",
+     "speaker": "Rodrigo"
+    },
+    {
+     "label": "Roger (male, EN) · emolia_c1620",
+     "subfolder": "emolia_c1620",
+     "speaker": "Roger"
+    },
+    {
+     "label": "Roland (male, EN) · k270_age3_bg1",
+     "subfolder": "k270_age3_bg1",
+     "speaker": "Roland"
+    },
+    {
+     "label": "Ronald (male, EN) · emolia_c0656",
+     "subfolder": "emolia_c0656",
+     "speaker": "Ronald"
+    },
+    {
+     "label": "Ronnie (?, EN) · k322_age4_bg1",
+     "subfolder": "k322_age4_bg1",
+     "speaker": "Ronnie"
+    },
+    {
+     "label": "Rory (?, EN) · k333_age3_bg1",
+     "subfolder": "k333_age3_bg1",
+     "speaker": "Rory"
+    },
+    {
+     "label": "Rosalie (female, EN) · k560_age4_bg1",
+     "subfolder": "k560_age4_bg1",
+     "speaker": "Rosalie"
+    },
+    {
+     "label": "Rosalind (female, EN) · emolia_c2279",
+     "subfolder": "emolia_c2279",
+     "speaker": "Rosalind"
+    },
+    {
+     "label": "Rose (female, EN) · emolia_c0460",
+     "subfolder": "emolia_c0460",
+     "speaker": "Rose"
+    },
+    {
+     "label": "Rosemarie (female, DE) · mediathek_0475",
+     "subfolder": "mediathek_0475",
+     "speaker": "Rosemarie"
+    },
+    {
+     "label": "Rosemary (female, EN) · k17_age3_bg1",
+     "subfolder": "k17_age3_bg1",
+     "speaker": "Rosemary"
+    },
+    {
+     "label": "Roswitha (female, DE) · mediathek_0439",
+     "subfolder": "mediathek_0439",
+     "speaker": "Roswitha"
+    },
+    {
+     "label": "Rowan (?, EN) · emolia_c0645",
+     "subfolder": "emolia_c0645",
+     "speaker": "Rowan"
+    },
+    {
+     "label": "Rowena (female, EN) · refvoice_0444",
+     "subfolder": "refvoice_0444",
+     "speaker": "Rowena"
+    },
+    {
+     "label": "Roy (male, EN) · emolia_c2046",
+     "subfolder": "emolia_c2046",
+     "speaker": "Roy"
+    },
+    {
+     "label": "Ruby (female, EN) · emolia_c0406",
+     "subfolder": "emolia_c0406",
+     "speaker": "Ruby"
+    },
+    {
+     "label": "Rufus (male, EN) · refvoice_0656",
+     "subfolder": "refvoice_0656",
+     "speaker": "Rufus"
+    },
+    {
+     "label": "Rupert (male, EN) · emolia_c2701",
+     "subfolder": "emolia_c2701",
+     "speaker": "Rupert"
+    },
+    {
+     "label": "Russell (male, EN) · emolia_c2144",
+     "subfolder": "emolia_c2144",
+     "speaker": "Russell"
+    },
+    {
+     "label": "Ryan (male, EN) · emolia_c0760",
+     "subfolder": "emolia_c0760",
+     "speaker": "Ryan"
+    },
+    {
+     "label": "Sabine (female, DE) · mediathek_0068",
+     "subfolder": "mediathek_0068",
+     "speaker": "Sabine"
+    },
+    {
+     "label": "Sage (?, EN) · emolia_c1651",
+     "subfolder": "emolia_c1651",
+     "speaker": "Sage"
+    },
+    {
+     "label": "Sam (?, EN) · emolia_c0023",
+     "subfolder": "emolia_c0023",
+     "speaker": "Sam"
+    },
+    {
+     "label": "Samuel (male, EN) · emolia_c0955",
+     "subfolder": "emolia_c0955",
+     "speaker": "Samuel"
+    },
+    {
+     "label": "Sandra (female, EN) · emolia_c1429",
+     "subfolder": "emolia_c1429",
+     "speaker": "Sandra"
+    },
+    {
+     "label": "Sascha (?, DE) · mediathek_0055",
+     "subfolder": "mediathek_0055",
+     "speaker": "Sascha"
+    },
+    {
+     "label": "Sasha (?, EN) · emolia_c0758",
+     "subfolder": "emolia_c0758",
+     "speaker": "Sasha"
+    },
+    {
+     "label": "Sawyer (?, EN) · k351_age3_bg1",
+     "subfolder": "k351_age3_bg1",
+     "speaker": "Sawyer"
+    },
+    {
+     "label": "Scott (male, EN) · emolia_c0910",
+     "subfolder": "emolia_c0910",
+     "speaker": "Scott"
+    },
+    {
+     "label": "Sean (male, EN) · emolia_c1771",
+     "subfolder": "emolia_c1771",
+     "speaker": "Sean"
+    },
+    {
+     "label": "Sebastian (male, DE) · mediathek_0038",
+     "subfolder": "mediathek_0038",
+     "speaker": "Sebastian"
+    },
+    {
+     "label": "Selena (female, EN) · k216_age3_bg1",
+     "subfolder": "k216_age3_bg1",
+     "speaker": "Selena"
+    },
+    {
+     "label": "Shannon (?, EN) · k355_age2_bg1",
+     "subfolder": "k355_age2_bg1",
+     "speaker": "Shannon"
+    },
+    {
+     "label": "Sharon (female, EN) · emolia_c1457",
+     "subfolder": "emolia_c1457",
+     "speaker": "Sharon"
+    },
+    {
+     "label": "Shay (?, EN) · emolia_c1759",
+     "subfolder": "emolia_c1759",
+     "speaker": "Shay"
+    },
+    {
+     "label": "Sheila (female, EN) · emolia_c2262",
+     "subfolder": "emolia_c2262",
+     "speaker": "Sheila"
+    },
+    {
+     "label": "Shiloh (?, EN) · k399_age3_bg1",
+     "subfolder": "k399_age3_bg1",
+     "speaker": "Shiloh"
+    },
+    {
+     "label": "Sidney (?, EN) · emolia_c1781",
+     "subfolder": "emolia_c1781",
+     "speaker": "Sidney"
+    },
+    {
+     "label": "Siegfried (male, DE) · mediathek_0274",
+     "subfolder": "mediathek_0274",
+     "speaker": "Siegfried"
+    },
+    {
+     "label": "Sieglinde (female, DE) · mediathek_0440",
+     "subfolder": "mediathek_0440",
+     "speaker": "Sieglinde"
+    },
+    {
+     "label": "Sigi (?, DE) · mediathek_0088",
+     "subfolder": "mediathek_0088",
+     "speaker": "Sigi"
+    },
+    {
+     "label": "Silas (male, EN) · refvoice_0693",
+     "subfolder": "refvoice_0693",
+     "speaker": "Silas"
+    },
+    {
+     "label": "Silke (female, DE) · mediathek_0278",
+     "subfolder": "mediathek_0278",
+     "speaker": "Silke"
+    },
+    {
+     "label": "Simone (?, DE) · mediathek_0190",
+     "subfolder": "mediathek_0190",
+     "speaker": "Simone"
+    },
+    {
+     "label": "Skyler (?, EN) · emolia_c0811",
+     "subfolder": "emolia_c0811",
+     "speaker": "Skyler"
+    },
+    {
+     "label": "Solomon (male, EN) · k296_age2_bg1",
+     "subfolder": "k296_age2_bg1",
+     "speaker": "Solomon"
+    },
+    {
+     "label": "Sophia (female, EN) · anime_035",
+     "subfolder": "anime_035",
+     "speaker": "Sophia"
+    },
+    {
+     "label": "Sophie (female, DE) · mediathek_0036",
+     "subfolder": "mediathek_0036",
+     "speaker": "Sophie"
+    },
+    {
+     "label": "Spencer (?, EN) · emolia_c1793",
+     "subfolder": "emolia_c1793",
+     "speaker": "Spencer"
+    },
+    {
+     "label": "Stefan (male, DE) · mediathek_0057",
+     "subfolder": "mediathek_0057",
+     "speaker": "Stefan"
+    },
+    {
+     "label": "Stella (female, EN) · emolia_c0882",
+     "subfolder": "emolia_c0882",
+     "speaker": "Stella"
+    },
+    {
+     "label": "Stephen (male, EN) · emolia_c0861",
+     "subfolder": "emolia_c0861",
+     "speaker": "Stephen"
+    },
+    {
+     "label": "Steven (male, EN) · emolia_c0334",
+     "subfolder": "emolia_c0334",
+     "speaker": "Steven"
+    },
+    {
+     "label": "Stevie (?, EN) · k467_age2_bg1",
+     "subfolder": "k467_age2_bg1",
+     "speaker": "Stevie"
+    },
+    {
+     "label": "Susannah (female, EN) · k565_age3_bg1",
+     "subfolder": "k565_age3_bg1",
+     "speaker": "Susannah"
+    },
+    {
+     "label": "Susanne (female, DE) · mediathek_0108",
+     "subfolder": "mediathek_0108",
+     "speaker": "Susanne"
+    },
+    {
+     "label": "Sydney (?, EN) · k471_age2_bg0",
+     "subfolder": "k471_age2_bg0",
+     "speaker": "Sydney"
+    },
+    {
+     "label": "Sylvester (male, EN) · k67_age3_bg1",
+     "subfolder": "k67_age3_bg1",
+     "speaker": "Sylvester"
+    },
+    {
+     "label": "Tabitha (female, EN) · k269_age5_bg1",
+     "subfolder": "k269_age5_bg1",
+     "speaker": "Tabitha"
+    },
+    {
+     "label": "Tallulah (female, EN) · k64_age4_bg1",
+     "subfolder": "k64_age4_bg1",
+     "speaker": "Tallulah"
+    },
+    {
+     "label": "Tatum (?, EN) · k474_age3_bg0",
+     "subfolder": "k474_age3_bg0",
+     "speaker": "Tatum"
+    },
+    {
+     "label": "Taylor (?, EN) · emolia_c0205",
+     "subfolder": "emolia_c0205",
+     "speaker": "Taylor"
+    },
+    {
+     "label": "Terrence (male, EN) · emolia_c1682",
+     "subfolder": "emolia_c1682",
+     "speaker": "Terrence"
+    },
+    {
+     "label": "Terry (?, EN) · k474_age3_bg1",
+     "subfolder": "k474_age3_bg1",
+     "speaker": "Terry"
+    },
+    {
+     "label": "Thaddeus (male, EN) · k298_age2_bg1",
+     "subfolder": "k298_age2_bg1",
+     "speaker": "Thaddeus"
+    },
+    {
+     "label": "Theodore (male, EN) · emolia_c2722",
+     "subfolder": "emolia_c2722",
+     "speaker": "Theodore"
+    },
+    {
+     "label": "Theresa (female, EN) · emolia_c1902",
+     "subfolder": "emolia_c1902",
+     "speaker": "Theresa"
+    },
+    {
+     "label": "Thomas (male, DE) · mediathek_0050",
+     "subfolder": "mediathek_0050",
+     "speaker": "Thomas"
+    },
+    {
+     "label": "Timothy (male, EN) · emolia_c0633",
+     "subfolder": "emolia_c0633",
+     "speaker": "Timothy"
+    },
+    {
+     "label": "Tobias (male, DE) · mediathek_0397",
+     "subfolder": "mediathek_0397",
+     "speaker": "Tobias"
+    },
+    {
+     "label": "Tommie (?, EN) · k474_age5_bg1",
+     "subfolder": "k474_age5_bg1",
+     "speaker": "Tommie"
+    },
+    {
+     "label": "Toni (?, DE) · mediathek_0039",
+     "subfolder": "mediathek_0039",
+     "speaker": "Toni"
+    },
+    {
+     "label": "Torsten (male, DE) · mediathek_0203",
+     "subfolder": "mediathek_0203",
+     "speaker": "Torsten"
+    },
+    {
+     "label": "Tracy (?, EN) · k47_age5_bg1",
+     "subfolder": "k47_age5_bg1",
+     "speaker": "Tracy"
+    },
+    {
+     "label": "Tristram (male, EN) · refvoice_0799",
+     "subfolder": "refvoice_0799",
+     "speaker": "Tristram"
+    },
+    {
+     "label": "Tyler (male, EN) · emolia_c1070",
+     "subfolder": "emolia_c1070",
+     "speaker": "Tyler"
+    },
+    {
+     "label": "Uli (?, DE) · mediathek_0100",
+     "subfolder": "mediathek_0100",
+     "speaker": "Uli"
+    },
+    {
+     "label": "Ulysses (male, EN) · emolia_c2751",
+     "subfolder": "emolia_c2751",
+     "speaker": "Ulysses"
+    },
+    {
+     "label": "Uriah (male, EN) · k304_age2_bg1",
+     "subfolder": "k304_age2_bg1",
+     "speaker": "Uriah"
+    },
+    {
+     "label": "Ursula (female, DE) · mediathek_0327",
+     "subfolder": "mediathek_0327",
+     "speaker": "Ursula"
+    },
+    {
+     "label": "Ute (female, DE) · mediathek_0078",
+     "subfolder": "mediathek_0078",
+     "speaker": "Ute"
+    },
+    {
+     "label": "Uwe (male, DE) · mediathek_0201",
+     "subfolder": "mediathek_0201",
+     "speaker": "Uwe"
+    },
+    {
+     "label": "Vali (?, DE) · mediathek_0457",
+     "subfolder": "mediathek_0457",
+     "speaker": "Vali"
+    },
+    {
+     "label": "Vaughn (male, EN) · k68_age3_bg1",
+     "subfolder": "k68_age3_bg1",
+     "speaker": "Vaughn"
+    },
+    {
+     "label": "Vera (female, EN) · emolia_c0865",
+     "subfolder": "emolia_c0865",
+     "speaker": "Vera"
+    },
+    {
+     "label": "Verena (female, DE) · mediathek_0311",
+     "subfolder": "mediathek_0311",
+     "speaker": "Verena"
+    },
+    {
+     "label": "Verity (female, EN) · k77_age2_bg1",
+     "subfolder": "k77_age2_bg1",
+     "speaker": "Verity"
+    },
+    {
+     "label": "Vernon (male, EN) · k325_age3_bg1",
+     "subfolder": "k325_age3_bg1",
+     "speaker": "Vernon"
+    },
+    {
+     "label": "Victor (male, EN) · emolia_c2795",
+     "subfolder": "emolia_c2795",
+     "speaker": "Victor"
+    },
+    {
+     "label": "Victoria (female, EN) · emolia_c0102",
+     "subfolder": "emolia_c0102",
+     "speaker": "Victoria"
+    },
+    {
+     "label": "Vincent (male, EN) · emolia_c2111",
+     "subfolder": "emolia_c2111",
+     "speaker": "Vincent"
+    },
+    {
+     "label": "Violet (female, EN) · emolia_c0542",
+     "subfolder": "emolia_c0542",
+     "speaker": "Violet"
+    },
+    {
+     "label": "Vivian (female, EN) · k292_age3_bg1",
+     "subfolder": "k292_age3_bg1",
+     "speaker": "Vivian"
+    },
+    {
+     "label": "Volker (male, DE) · mediathek_0482",
+     "subfolder": "mediathek_0482",
+     "speaker": "Volker"
+    },
+    {
+     "label": "Walter (male, EN) · emolia_c1469",
+     "subfolder": "emolia_c1469",
+     "speaker": "Walter"
+    },
+    {
+     "label": "Waltraud (female, DE) · mediathek_0424",
+     "subfolder": "mediathek_0424",
+     "speaker": "Waltraud"
+    },
+    {
+     "label": "Wanda (female, EN) · emolia_c1905",
+     "subfolder": "emolia_c1905",
+     "speaker": "Wanda"
+    },
+    {
+     "label": "Warren (male, EN) · k331_age4_bg1",
+     "subfolder": "k331_age4_bg1",
+     "speaker": "Warren"
+    },
+    {
+     "label": "Wayne (male, EN) · emolia_c1979",
+     "subfolder": "emolia_c1979",
+     "speaker": "Wayne"
+    },
+    {
+     "label": "Wendell (male, EN) · refvoice_0885",
+     "subfolder": "refvoice_0885",
+     "speaker": "Wendell"
+    },
+    {
+     "label": "Whitney (?, EN) · k489_age3_bg1",
+     "subfolder": "k489_age3_bg1",
+     "speaker": "Whitney"
+    },
+    {
+     "label": "Wiebke (female, DE) · mediathek_0491",
+     "subfolder": "mediathek_0491",
+     "speaker": "Wiebke"
+    },
+    {
+     "label": "Wilbur (male, EN) · k340_age2_bg1",
+     "subfolder": "k340_age2_bg1",
+     "speaker": "Wilbur"
+    },
+    {
+     "label": "Wilhelmina (female, EN) · k91_age3_bg0",
+     "subfolder": "k91_age3_bg0",
+     "speaker": "Wilhelmina"
+    },
+    {
+     "label": "William (male, EN) · emolia_c0019",
+     "subfolder": "emolia_c0019",
+     "speaker": "William"
+    },
+    {
+     "label": "Willow (female, EN) · emolia_c0711",
+     "subfolder": "emolia_c0711",
+     "speaker": "Willow"
+    },
+    {
+     "label": "Winifred (female, EN) · k292_age3_bg2",
+     "subfolder": "k292_age3_bg2",
+     "speaker": "Winifred"
+    },
+    {
+     "label": "Wolfgang (male, DE) · mediathek_0153",
+     "subfolder": "mediathek_0153",
+     "speaker": "Wolfgang"
+    },
+    {
+     "label": "Wren (?, EN) · k492_age2_bg1",
+     "subfolder": "k492_age2_bg1",
+     "speaker": "Wren"
+    },
+    {
+     "label": "Xavier (male, EN) · emolia_c2810",
+     "subfolder": "emolia_c2810",
+     "speaker": "Xavier"
+    },
+    {
+     "label": "Yolanda (female, EN) · k91_age3_bg1",
+     "subfolder": "k91_age3_bg1",
+     "speaker": "Yolanda"
+    },
+    {
+     "label": "Yvonne (female, EN) · emolia_c1970",
+     "subfolder": "emolia_c1970",
+     "speaker": "Yvonne"
+    },
+    {
+     "label": "Zachariah (male, EN) · emolia_c2883",
+     "subfolder": "emolia_c2883",
+     "speaker": "Zachariah"
+    },
+    {
+     "label": "Zachary (male, EN) · emolia_c1340",
+     "subfolder": "emolia_c1340",
+     "speaker": "Zachary"
+    },
+    {
+     "label": "Zelda (female, EN) · refvoice_0062",
+     "subfolder": "refvoice_0062",
+     "speaker": "Zelda"
+    },
+    {
+     "label": "Zoe (female, EN) · emolia_c0193",
+     "subfolder": "emolia_c0193",
+     "speaker": "Zoe"
+    }
+   ]
+  },
+  {
+   "prefix": "LAION emotion / ",
+   "repo": "laion/moss-va-sft3-emotion-loras",
+   "revision": "7e42a2629c5480a2b4f8af59574f2ec62b0ebbf2",
+   "adapters": [
+    {
+     "label": "Affection",
+     "subfolder": "Affection"
+    },
+    {
+     "label": "Amusement",
+     "subfolder": "Amusement"
+    },
+    {
+     "label": "Anger",
+     "subfolder": "Anger"
+    },
+    {
+     "label": "Astonishment / Surprise",
+     "subfolder": "Astonishment_Surprise"
+    },
+    {
+     "label": "Awe",
+     "subfolder": "Awe"
+    },
+    {
+     "label": "Bitterness",
+     "subfolder": "Bitterness"
+    },
+    {
+     "label": "Concentration",
+     "subfolder": "Concentration"
+    },
+    {
+     "label": "Confusion",
+     "subfolder": "Confusion"
+    },
+    {
+     "label": "Contemplation",
+     "subfolder": "Contemplation"
+    },
+    {
+     "label": "Contempt",
+     "subfolder": "Contempt"
+    },
+    {
+     "label": "Contentment",
+     "subfolder": "Contentment"
+    },
+    {
+     "label": "Disappointment",
+     "subfolder": "Disappointment"
+    },
+    {
+     "label": "Disgust",
+     "subfolder": "Disgust"
+    },
+    {
+     "label": "Distress",
+     "subfolder": "Distress"
+    },
+    {
+     "label": "Doubt",
+     "subfolder": "Doubt"
+    },
+    {
+     "label": "Elation",
+     "subfolder": "Elation"
+    },
+    {
+     "label": "Embarrassment",
+     "subfolder": "Embarrassment"
+    },
+    {
+     "label": "Emotional / Numbness",
+     "subfolder": "Emotional_Numbness"
+    },
+    {
+     "label": "Fatigue / Exhaustion",
+     "subfolder": "Fatigue_Exhaustion"
+    },
+    {
+     "label": "Fear",
+     "subfolder": "Fear"
+    },
+    {
+     "label": "Helplessness",
+     "subfolder": "Helplessness"
+    },
+    {
+     "label": "Hope / Enthusiasm / Optimism",
+     "subfolder": "Hope_Enthusiasm_Optimism"
+    },
+    {
+     "label": "Impatience / and / Irritability",
+     "subfolder": "Impatience_and_Irritability"
+    },
+    {
+     "label": "Infatuation",
+     "subfolder": "Infatuation"
+    },
+    {
+     "label": "Interest",
+     "subfolder": "Interest"
+    },
+    {
+     "label": "Intoxication / Altered / States / of / Consciousness",
+     "subfolder": "Intoxication_Altered_States_of_Consciousness"
+    },
+    {
+     "label": "Jealousy / and / Envy",
+     "subfolder": "Jealousy_and_Envy"
+    },
+    {
+     "label": "Longing",
+     "subfolder": "Longing"
+    },
+    {
+     "label": "Malevolence / Malice",
+     "subfolder": "Malevolence_Malice"
+    },
+    {
+     "label": "Pain",
+     "subfolder": "Pain"
+    },
+    {
+     "label": "Pleasure / Ecstasy",
+     "subfolder": "Pleasure_Ecstasy"
+    },
+    {
+     "label": "Pride",
+     "subfolder": "Pride"
+    },
+    {
+     "label": "Relief",
+     "subfolder": "Relief"
+    },
+    {
+     "label": "Sadness",
+     "subfolder": "Sadness"
+    },
+    {
+     "label": "Sexual / Lust",
+     "subfolder": "Sexual_Lust"
+    },
+    {
+     "label": "Shame",
+     "subfolder": "Shame"
+    },
+    {
+     "label": "Sourness",
+     "subfolder": "Sourness"
+    },
+    {
+     "label": "Teasing",
+     "subfolder": "Teasing"
+    },
+    {
+     "label": "Thankfulness / Gratitude",
+     "subfolder": "Thankfulness_Gratitude"
+    },
+    {
+     "label": "Triumph",
+     "subfolder": "Triumph"
+    }
+   ]
+  },
+  {
+   "prefix": "LAION ",
+   "repo": "laion/moss-va-sft3-dpo-lora",
+   "revision": "c86b970a6306857349d220686e4b04d847a73747",
+   "adapters": [
+    {
+     "label": "DPO quality",
+     "subfolder": ""
+    }
+   ]
+  },
+  {
+   "prefix": "LAION burst (v2-trained) / ",
+   "repo": "laion/vocal-burst-lora-adapters",
+   "revision": "6740202119aee3a748a5e0a83e475715ad6d144b",
+   "adapters": [
+    {
+     "label": "affirmative grunt",
+     "subfolder": "affirmative_grunt"
+    },
+    {
+     "label": "breathy giggle",
+     "subfolder": "breathy_giggle"
+    },
+    {
+     "label": "cackle",
+     "subfolder": "cackle"
+    },
+    {
+     "label": "childlike giggle",
+     "subfolder": "childlike_giggle"
+    },
+    {
+     "label": "chuckle",
+     "subfolder": "chuckle"
+    },
+    {
+     "label": "clears throat",
+     "subfolder": "clears_throat"
+    },
+    {
+     "label": "contented sigh",
+     "subfolder": "contented_sigh"
+    },
+    {
+     "label": "convulsive sob",
+     "subfolder": "convulsive_sob"
+    },
+    {
+     "label": "cough",
+     "subfolder": "cough"
+    },
+    {
+     "label": "coughing",
+     "subfolder": "coughing"
+    },
+    {
+     "label": "deep breath",
+     "subfolder": "deep_breath"
+    },
+    {
+     "label": "deep breathing",
+     "subfolder": "deep_breathing"
+    },
+    {
+     "label": "displeased grunt",
+     "subfolder": "displeased_grunt"
+    },
+    {
+     "label": "drinking noises",
+     "subfolder": "drinking_noises"
+    },
+    {
+     "label": "effort grunt",
+     "subfolder": "effort_grunt"
+    },
+    {
+     "label": "exasperated sigh",
+     "subfolder": "exasperated_sigh"
+    },
+    {
+     "label": "exhausted groan",
+     "subfolder": "exhausted_groan"
+    },
+    {
+     "label": "fast breathing",
+     "subfolder": "fast_breathing"
+    },
+    {
+     "label": "fearful gasp",
+     "subfolder": "fearful_gasp"
+    },
+    {
+     "label": "frustrated groan",
+     "subfolder": "frustrated_groan"
+    },
+    {
+     "label": "growl",
+     "subfolder": "growl"
+    },
+    {
+     "label": "guffaw",
+     "subfolder": "guffaw"
+    },
+    {
+     "label": "gulps",
+     "subfolder": "gulps"
+    },
+    {
+     "label": "gurgling",
+     "subfolder": "gurgling"
+    },
+    {
+     "label": "heavy breathing",
+     "subfolder": "heavy_breathing"
+    },
+    {
+     "label": "hiccup",
+     "subfolder": "hiccup"
+    },
+    {
+     "label": "hiccups",
+     "subfolder": "hiccups"
+    },
+    {
+     "label": "hiss",
+     "subfolder": "hiss"
+    },
+    {
+     "label": "humming",
+     "subfolder": "humming"
+    },
+    {
+     "label": "kissing noises",
+     "subfolder": "kissing_noises"
+    },
+    {
+     "label": "lip smack",
+     "subfolder": "lip_smack"
+    },
+    {
+     "label": "low mumble",
+     "subfolder": "low_mumble"
+    },
+    {
+     "label": "mournful wail",
+     "subfolder": "mournful_wail"
+    },
+    {
+     "label": "nervous giggle",
+     "subfolder": "nervous_giggle"
+    },
+    {
+     "label": "normal breathing",
+     "subfolder": "normal_breathing"
+    },
+    {
+     "label": "pain moan",
+     "subfolder": "pain_moan"
+    },
+    {
+     "label": "panting",
+     "subfolder": "panting"
+    },
+    {
+     "label": "person whistling playfully",
+     "subfolder": "person_whistling_playfully"
+    },
+    {
+     "label": "person whistling to get attention",
+     "subfolder": "person_whistling_to_get_attention"
+    },
+    {
+     "label": "pleasure moan",
+     "subfolder": "pleasure_moan"
+    },
+    {
+     "label": "quiet sob",
+     "subfolder": "quiet_sob"
+    },
+    {
+     "label": "relief sigh",
+     "subfolder": "relief_sigh"
+    },
+    {
+     "label": "resonant hum",
+     "subfolder": "resonant_hum"
+    },
+    {
+     "label": "scream",
+     "subfolder": "scream"
+    },
+    {
+     "label": "sharp inhale",
+     "subfolder": "sharp_inhale"
+    },
+    {
+     "label": "sharp whistle",
+     "subfolder": "sharp_whistle"
+    },
+    {
+     "label": "shriek",
+     "subfolder": "shriek"
+    },
+    {
+     "label": "slow breathing",
+     "subfolder": "slow_breathing"
+    },
+    {
+     "label": "slurping noises",
+     "subfolder": "slurping_noises"
+    },
+    {
+     "label": "smack one s lips",
+     "subfolder": "smack_one_s_lips"
+    },
+    {
+     "label": "snicker",
+     "subfolder": "snicker"
+    },
+    {
+     "label": "sniff",
+     "subfolder": "sniff"
+    },
+    {
+     "label": "snort",
+     "subfolder": "snort"
+    },
+    {
+     "label": "snorting giggle",
+     "subfolder": "snorting_giggle"
+    },
+    {
+     "label": "sobs",
+     "subfolder": "sobs"
+    },
+    {
+     "label": "soft hum",
+     "subfolder": "soft_hum"
+    },
+    {
+     "label": "soft whistle",
+     "subfolder": "soft_whistle"
+    },
+    {
+     "label": "spitting",
+     "subfolder": "spitting"
+    },
+    {
+     "label": "surprised gasp",
+     "subfolder": "surprised_gasp"
+    },
+    {
+     "label": "swallows",
+     "subfolder": "swallows"
+    },
+    {
+     "label": "trembling whimper",
+     "subfolder": "trembling_whimper"
+    },
+    {
+     "label": "wistful sigh",
+     "subfolder": "wistful_sigh"
+    },
+    {
+     "label": "wolf whistle",
+     "subfolder": "wolf_whistle"
+    },
+    {
+     "label": "yawn",
+     "subfolder": "yawn"
+    }
+   ]
+  }
+ ]
+}
