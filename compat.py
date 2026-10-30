@@ -290,6 +290,20 @@ def comfy_models_dir() -> Optional[str]:
     return None
 
 
+def comfy_folder_paths(name: str) -> list[str]:
+    """ComfyUI's folders for a model kind (models/<name> plus any
+    extra_model_paths.yaml entries); [] without ComfyUI or an unknown kind."""
+    folder_paths = _try_import("folder_paths")
+    if folder_paths is None:
+        return []
+    try:
+        if name in folder_paths.folder_names_and_paths:
+            return [str(p) for p in folder_paths.get_folder_paths(name)]
+    except Exception:
+        pass
+    return []
+
+
 def register_model_folder(name: str, path: str) -> None:
     folder_paths = _try_import("folder_paths")
     if folder_paths is None:

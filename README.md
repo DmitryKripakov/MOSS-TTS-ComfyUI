@@ -47,7 +47,7 @@ python install.py   # 只装缺失的轻量依赖
 
 ## Fine-tunes（本 fork）
 
-Load Model 增加了 LAION voice-acting 微调（sft3 4.55B、8B）和 `custom_model`（`models/mosstts/` 下自己的微调目录）；生成节点增加了 `sampling_preset`；新增 Director System Prompt（LLM 系统提示词：纯文本 → 带情绪标注的表演脚本）和 Script Builder（计算 sft3 的时长标注与 target_tokens）；LoRA 节点（不合并、可叠加，含 LAION 的 605 个适配器）。详见 [README_en.md](README_en.md#fine-tunes-this-fork)。
+Load Model 增加了 LAION voice-acting 微调（sft3 4.55B、8B）和 `custom_model`（`models/mosstts/` 下自己的微调目录）；生成节点增加了 `sampling_preset`；新增 Director System Prompt（LLM 系统提示词：纯文本 → 带情绪标注的表演脚本）和 Script Builder（计算 sft3 的时长标注与 target_tokens）；LoRA 节点（不合并、可叠加，含 LAION 的 605 个适配器）。缺失的模型与适配器会下载到 `ComfyUI/models/mosstts` 与 `models/mosstts_loras`；`example_workflows/` 中新增三个 LAION 示例工作流。详见 [README_en.md](README_en.md#fine-tunes-this-fork)。
 
 ## 显存
 

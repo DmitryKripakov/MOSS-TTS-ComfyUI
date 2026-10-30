@@ -345,6 +345,41 @@ def test_models_dir_env_override(tmp_path, monkeypatch):
     assert loader._resolve_dir_for(spec.repo_id, False) == d
 
 
+def test_missing_models_download_into_comfy_models(tmp_path, monkeypatch):
+    import huggingface_hub
+
+    from moss_tts import loader
+
+    calls = []
+
+    def fake_snapshot(repo_id, local_files_only=False, local_dir=None, **kw):
+        if local_files_only:
+            raise FileNotFoundError("not in the HF cache")
+        calls.append((repo_id, local_dir))
+        Path(local_dir).mkdir(parents=True, exist_ok=True)
+        (Path(local_dir) / "config.json").write_text("{}")
+        return local_dir
+
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", fake_snapshot)
+    monkeypatch.delenv("MOSS_TTS_MODELS_DIR", raising=False)
+    monkeypatch.setattr(loader.compat, "comfy_models_dir", lambda: str(tmp_path / "models"))
+    monkeypatch.setattr(loader.compat, "comfy_folder_paths", lambda name: [])
+    target = tmp_path / "models" / "mosstts" / "moss-tts-v1.5-8b-voice-acting"
+    assert loader._resolve_dir_for("laion/moss-tts-v1.5-8b-voice-acting", True) == target
+    assert calls == [("laion/moss-tts-v1.5-8b-voice-acting", str(target))]
+    assert loader._resolve_dir_for("laion/moss-tts-v1.5-8b-voice-acting", True) == target   # found
+    assert len(calls) == 1
+    marker = target / ".cache" / "huggingface" / "download" / "model.safetensors.incomplete"
+    marker.parent.mkdir(parents=True)
+    marker.write_text("")
+    with pytest.raises(FileNotFoundError, match="interrupted download"):
+        loader._resolve_dir_for("laion/moss-tts-v1.5-8b-voice-acting", False)
+    assert loader._resolve_dir_for("laion/moss-tts-v1.5-8b-voice-acting", True) == target   # resumes there
+    assert calls[-1] == ("laion/moss-tts-v1.5-8b-voice-acting", str(target))
+    monkeypatch.setattr(loader.compat, "comfy_folder_paths", lambda name: [str(tmp_path / "extra")])
+    assert loader._models_root_candidates()[0] == tmp_path / "extra"         # extra_model_paths.yaml
+
+
 def test_load_installs_cache_invalidation_unload_hook(tmp_path, monkeypatch):
     from types import SimpleNamespace
 

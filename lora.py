@@ -204,23 +204,39 @@ LORA_FOLDER_NAME = "mosstts_loras"
 _SCAN_DEPTH = 4
 
 
-def local_roots(models_dir: Optional[str]) -> list[Path]:
+def local_roots(models_dir: Optional[str], extra: tuple = ()) -> list[Path]:
     roots = []
     env = os.getenv("MOSS_TTS_LORAS_DIR")
     if env:
         roots.append(Path(env))
-    if models_dir:
+    roots.extend(Path(p) for p in extra)               # extra_model_paths.yaml entries
+    if models_dir and Path(models_dir) / LORA_FOLDER_NAME not in roots:
         roots.append(Path(models_dir) / LORA_FOLDER_NAME)
     return roots
 
 
-def list_local(models_dir: Optional[str]) -> dict[str, Path]:
+def download_root(models_dir: Optional[str]) -> Optional[Path]:
+    """Where LAION adapters are downloaded: ComfyUI/models/mosstts_loras (or
+    $MOSS_TTS_LORAS_DIR); None outside ComfyUI -> the HF cache."""
+    env = os.getenv("MOSS_TTS_LORAS_DIR")
+    if env:
+        return Path(env)
+    return Path(models_dir) / LORA_FOLDER_NAME if models_dir else None
+
+
+def catalog_label(repo: str, subfolder: str) -> str:
+    """The relative folder a LAION adapter lands in under mosstts_loras."""
+    name = repo.split("/")[-1]
+    return f"{name}/{subfolder}" if subfolder else name
+
+
+def list_local(models_dir: Optional[str], extra: tuple = ()) -> dict[str, Path]:
     """{label (relative folder): adapter file} for every folder holding
     adapter_model.safetensors under models/mosstts_loras (or
     $MOSS_TTS_LORAS_DIR), a few levels deep — a whole downloaded HF repo of
     adapters works as is."""
     found: dict[str, Path] = {}
-    for root in local_roots(models_dir):
+    for root in local_roots(models_dir, extra):
         if not root.is_dir():
             continue
         for dirpath, dirnames, filenames in os.walk(root):
@@ -269,10 +285,26 @@ def known_speaker(folder_name: str) -> str:
     return ""
 
 
-def fetch_hf(repo: str, subfolder: str, revision: Optional[str] = None) -> Path:
-    """Download (or find in the HF cache) one adapter -> its safetensors path."""
+def fetch_hf(repo: str, subfolder: str, revision: Optional[str] = None,
+             local_root: Optional[Path] = None) -> Path:
+    """One LAION adapter -> its safetensors path. With `local_root`
+    (ComfyUI/models/mosstts_loras) it is kept at
+    <local_root>/<repo name>/<subfolder>/ — reused from there, downloaded there
+    otherwise; without it, the HF cache."""
     from huggingface_hub import hf_hub_download
 
     kw = {"subfolder": subfolder or None, "revision": revision}
+    if local_root is not None:
+        folder = Path(local_root) / repo.split("/")[-1]
+        target = folder / (subfolder or "") / ADAPTER_FILE
+        if target.is_file() and (target.parent / CONFIG_FILE).is_file() and not _incomplete(folder):
+            return target
+        logger.info("[MOSS-TTS LoRA] downloading %s/%s into %s", repo, subfolder, folder)
+        kw["local_dir"] = str(folder)
     hf_hub_download(repo, CONFIG_FILE, **kw)
     return Path(hf_hub_download(repo, ADAPTER_FILE, **kw))
+
+
+def _incomplete(folder: Path) -> bool:
+    cache = folder / ".cache" / "huggingface"
+    return cache.is_dir() and any(cache.rglob("*.incomplete"))

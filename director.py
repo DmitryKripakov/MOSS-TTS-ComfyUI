@@ -78,7 +78,7 @@ TARGET_SFT3 = "LAION sft3 — timed script"
 TARGET_INSTRUCTION = "LAION 8B / MOSS — instruction + text"
 TARGETS = [TARGET_SFT3, TARGET_INSTRUCTION]
 VOICE_DESCRIBE = "describe the voice"
-VOICE_REFERENCE = "voice comes from a reference clip"
+VOICE_REFERENCE = "voice is fixed (reference clip / voice LoRA)"
 VOICE_MODES = [VOICE_DESCRIBE, VOICE_REFERENCE]
 WORDING_EXACT = "keep the words exactly"
 WORDING_ADAPT = "may adapt the words for speech"
@@ -137,7 +137,8 @@ SCRIPT:
 _SFT3_VOICE_DESCRIBE = ("- Start with the voice that fits the text: age, gender, timbre, pitch range, "
                         "clarity — e.g. \"a young adult feminine voice, bright, fairly smooth\".")
 _SFT3_VOICE_REFERENCE = ("- Never describe the voice itself (age, gender, timbre, accent, who it is) — it "
-                         "comes from a reference recording, and describing it fights the reference.")
+                         "is fixed by a reference recording or a voice adapter, and describing it "
+                         "fights them.")
 
 _SFT3_WORDING_EXACT = ("- Keep the user's words exactly, in their order and language. You only add cues, "
                        "sounds and beats around them. Write normal sentence case.")
@@ -186,8 +187,8 @@ TEXT — {wording_rule}
 
 _INSTR_VOICE_DESCRIBE = ("- Include the voice that fits: age, gender, timbre — e.g. \"a weary old sailor, "
                          "low and gravelly\".")
-_INSTR_VOICE_REFERENCE = ("- Never describe the voice itself (age, gender, timbre) — it comes from a "
-                          "reference recording. Describe only the performance.")
+_INSTR_VOICE_REFERENCE = ("- Never describe the voice itself (age, gender, timbre) — it is fixed by a "
+                          "reference recording or a voice adapter. Describe only the performance.")
 _INSTR_WORDING_EXACT = "the user's words exactly, in their order and language."
 _INSTR_WORDING_ADAPT = ("the user's text in its language and meaning, smoothed for natural speech if "
                         "needed; no new content.")

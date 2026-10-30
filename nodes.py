@@ -371,7 +371,13 @@ _LORA_NONE = "none"
 
 
 def _lora_choices() -> tuple[dict, dict]:
-    return adapters.list_local(compat.comfy_models_dir()), adapters.hf_choices()
+    """(your adapters, LAION's). LAION adapters already downloaded into
+    mosstts_loras are listed once, under their LAION name."""
+    hf = adapters.hf_choices()
+    local = adapters.list_local(compat.comfy_models_dir(),
+                                tuple(compat.comfy_folder_paths(adapters.LORA_FOLDER_NAME)))
+    laion = {adapters.catalog_label(e["repo"], e["subfolder"]) for e in hf.values()}
+    return {k: v for k, v in local.items() if k not in laion}, hf
 
 
 class MossTTSV15LoRA:
@@ -424,7 +430,8 @@ class MossTTSV15LoRA:
                 path, auto_speaker = local[lora], adapters.known_speaker(local[lora].parent.name)
             elif lora in hf:
                 entry = hf[lora]
-                path = adapters.fetch_hf(entry["repo"], entry["subfolder"], entry.get("revision"))
+                path = adapters.fetch_hf(entry["repo"], entry["subfolder"], entry.get("revision"),
+                                         adapters.download_root(compat.comfy_models_dir()))
                 auto_speaker = entry["speaker"]
                 if not str(getattr(mosstts_model.spec, "key", "")).startswith(("laion_sft3", "custom:")):
                     logger.warning("[MOSS-TTS LoRA] %s is trained on LAION voice-acting sft3; the loaded "
@@ -461,9 +468,10 @@ class MossTTSV15DirectorPrompt:
                 }),
                 "voice": (director.VOICE_MODES, {
                     "default": director.VOICE_DESCRIBE,
-                    "tooltip": "describe the voice: the LLM picks age / gender / timbre for Generate "
-                               "Speech. reference clip: for Voice Clone — the LLM must not describe the "
-                               "voice, it would fight the reference.",
+                    "tooltip": "describe the voice: the LLM picks age / gender / timbre (plain Generate "
+                               "Speech). fixed: Voice Clone or a voice LoRA — the LLM must not describe "
+                               "the voice (it would fight the reference / adapter, and a description that "
+                               "changes per run changes the voice).",
                 }),
                 "wording": (director.WORDING_MODES, {
                     "default": director.WORDING_EXACT,
