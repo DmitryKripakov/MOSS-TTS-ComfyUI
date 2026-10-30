@@ -113,7 +113,7 @@ def test_scaling_variants_and_bad_adapters(tmp_path):
     with pytest.raises(ValueError, match="does not fit"):
         lora.apply(_Tiny(), (("wrong", str(p), 1.0),))
     p, _ = _adapter(tmp_path / "missing", modules=("nope.proj",), shapes={"nope.proj": (8, 8)})
-    with pytest.raises(ValueError, match="1 missing"):
+    with pytest.raises(ValueError, match="1 of 1 layers missing"):
         lora.apply(_Tiny(), (("missing", str(p), 1.0),))
 
 
@@ -163,7 +163,7 @@ def test_lora_node_stacks_on_a_copy(tmp_path, monkeypatch):
     monkeypatch.setattr(nodes.adapters, "fetch_hf",
                         lambda repo, sub, rev=None, local_root=None: fetched.append((repo, sub, local_root))
                         or root / "mosstts_loras" / "mine" / lora.ADAPTER_FILE)
-    base = MossTTSBundle(spec=SimpleNamespace(key="laion_sft3"), model=nn.Linear(1, 1), processor=None,
+    base = MossTTSBundle(spec=SimpleNamespace(key="laion_sft3"), model=_Tiny(), processor=None,
                          codec=nn.Linear(1, 1), model_dir=tmp_path, codec_dir=tmp_path,
                          device=torch.device("cpu"), torch_dtype=torch.float32, dtype_name="fp32",
                          attn_implementation="sdpa")
@@ -243,3 +243,19 @@ def test_fetch_hf_downloads_into_the_comfy_folder(tmp_path, monkeypatch):
     monkeypatch.delenv("MOSS_TTS_LORAS_DIR")
     assert lora.download_root("/comfy/models") == Path("/comfy/models/mosstts_loras")
     assert lora.download_root(None) is None
+
+
+def test_lora_node_rejects_a_model_it_does_not_fit_right_away(tmp_path, monkeypatch):
+    import moss_tts.nodes as nodes
+    from moss_tts.loader import MossTTSBundle
+
+    root = tmp_path / "models"
+    _adapter(root / "mosstts_loras" / "mine")
+    monkeypatch.delenv("MOSS_TTS_LORAS_DIR", raising=False)
+    monkeypatch.setattr(nodes.compat, "comfy_models_dir", lambda: str(root))
+    other = MossTTSBundle(spec=SimpleNamespace(key="laion_va8b"), model=nn.Linear(1, 1), processor=None,
+                          codec=nn.Linear(1, 1), model_dir=tmp_path, codec_dir=tmp_path,
+                          device=torch.device("cpu"), torch_dtype=torch.float32, dtype_name="fp32",
+                          attn_implementation="sdpa")
+    with pytest.raises(ValueError, match="2 of 2 layers missing.*LAION voice-acting sft3"):
+        nodes.MossTTSV15LoRA().apply(other, "mine", 1.0)

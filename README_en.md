@@ -130,6 +130,13 @@ the generate node:
 | `moss_tts_laion_director_voice_lora.json` | plain text → LLM director (core Generate Text, Director System Prompt) → Script Builder → sft3 with a LAION voice LoRA |
 | `moss_tts_laion_script_voice_lora.json` | a hand-written script (no LLM) → Script Builder → sft3 with voice + DPO quality LoRAs |
 | `moss_tts_laion_same_voice_clone.json` | the same voice from one reference clip: Voice Clone + voice LoRA at 0.25 |
+| `moss_tts_laion_8b_director.json` | LAION **8B**: LLM director in *instruction + text* mode → plain text + one instruction (no timed tags, no LoRAs) |
+
+The sft3 examples (timed scripts, LoRAs) need **LAION voice-acting sft3**. The 8B is a
+different model: it reads timed tags as words (noise, silence, minutes of babble) — the
+generate nodes refuse a timed script on a Delay-family model — and LAION's adapters do
+not fit it (the LoRA node says so right away). With a length target, generation stops
+by 2x `target_tokens` at most, so a take that misses its end cannot run for minutes.
 
 ### Folder layout
 

@@ -1,0 +1,1014 @@
+{
+  "id": "87bc0423-aedf-44d3-90ba-73986fb7025d",
+  "revision": 0,
+  "last_node_id": 9,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "Note",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        520,
+        300
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "LAION 8B voice-acting (24 kHz, multilingual) with an LLM director\nLAION 8B voice-acting (24 кГц, много языков) с LLM-режиссёром\n\nThe 8B model takes ONE instruction (emotion, character, pace) + plain text — no timed tags, no LoRAs (LAION's adapters are for sft3 only). Director target = \"LAION 8B / MOSS — instruction + text\"; Script Builder then passes the instruction and the clean text.\n8B принимает ОДНУ инструкцию (эмоция, персонаж, темп) + чистый текст — без тайм-тегов и без LoRA (адаптеры LAION только для sft3). В Director target = \"LAION 8B / MOSS — instruction + text\"; Script Builder отдаёт инструкцию и чистый текст.\n\nSame voice here: Voice Clone with one reference clip, or Director voice = \"describe\" with a fixed description in extra.\nОдин голос: Voice Clone с одним референсом, или voice = \"describe\" и постоянное описание голоса в extra."
+      ],
+      "widgets_values_named": {
+        "text": "LAION 8B voice-acting (24 kHz, multilingual) with an LLM director\nLAION 8B voice-acting (24 кГц, много языков) с LLM-режиссёром\n\nThe 8B model takes ONE instruction (emotion, character, pace) + plain text — no timed tags, no LoRAs (LAION's adapters are for sft3 only). Director target = \"LAION 8B / MOSS — instruction + text\"; Script Builder then passes the instruction and the clean text.\n8B принимает ОДНУ инструкцию (эмоция, персонаж, темп) + чистый текст — без тайм-тегов и без LoRA (адаптеры LAION только для sft3). В Director target = \"LAION 8B / MOSS — instruction + text\"; Script Builder отдаёт инструкцию и чистый текст.\n\nSame voice here: Voice Clone with one reference clip, or Director voice = \"describe\" with a fixed description in extra.\nОдин голос: Voice Clone с одним референсом, или voice = \"describe\" и постоянное описание голоса в extra."
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 2,
+      "type": "MossTTSV15_LoadModel",
+      "pos": [
+        40,
+        380
+      ],
+      "size": [
+        400,
+        160
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "COMBO",
+          "widget": {
+            "name": "model"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "dtype",
+          "name": "dtype",
+          "type": "COMBO",
+          "widget": {
+            "name": "dtype"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "attention",
+          "name": "attention",
+          "type": "COMBO",
+          "widget": {
+            "name": "attention"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "download_if_missing",
+          "name": "download_if_missing",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "download_if_missing"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "custom_model",
+          "name": "custom_model",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "custom_model"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "mosstts_model",
+          "name": "mosstts_model",
+          "type": "MOSSTTS_V15_MODEL",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MossTTSV15_LoadModel"
+      },
+      "widgets_values": [
+        "LAION voice-acting 8B (Delay, 24kHz, multilingual)",
+        "auto",
+        "auto",
+        true,
+        "none"
+      ],
+      "widgets_values_named": {
+        "model": "LAION voice-acting 8B (Delay, 24kHz, multilingual)",
+        "dtype": "auto",
+        "attention": "auto",
+        "download_if_missing": true,
+        "custom_model": "none"
+      }
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        600,
+        40
+      ],
+      "size": [
+        360,
+        110
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "clip_name",
+          "name": "clip_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "clip_name"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "type",
+          "name": "type",
+          "type": "COMBO",
+          "widget": {
+            "name": "type"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "device",
+          "name": "device",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "CLIP",
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "qwen3.5_2b_bf16.safetensors",
+        "stable_diffusion",
+        "default"
+      ],
+      "widgets_values_named": {
+        "clip_name": "qwen3.5_2b_bf16.safetensors",
+        "type": "stable_diffusion",
+        "device": "default"
+      }
+    },
+    {
+      "id": 4,
+      "type": "MossTTSV15_DirectorPrompt",
+      "pos": [
+        600,
+        190
+      ],
+      "size": [
+        360,
+        220
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "target",
+          "name": "target",
+          "type": "COMBO",
+          "widget": {
+            "name": "target"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "voice",
+          "name": "voice",
+          "type": "COMBO",
+          "widget": {
+            "name": "voice"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "wording",
+          "name": "wording",
+          "type": "COMBO",
+          "widget": {
+            "name": "wording"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "bursts",
+          "name": "bursts",
+          "type": "COMBO",
+          "widget": {
+            "name": "bursts"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "extra",
+          "name": "extra",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "extra"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "system_prompt",
+          "name": "system_prompt",
+          "type": "STRING",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MossTTSV15_DirectorPrompt"
+      },
+      "widgets_values": [
+        "LAION 8B / MOSS — instruction + text",
+        "describe the voice",
+        "keep the words exactly",
+        "often (natural speech)",
+        "The voice: a warm, slightly husky woman in her thirties."
+      ],
+      "widgets_values_named": {
+        "target": "LAION 8B / MOSS — instruction + text",
+        "voice": "describe the voice",
+        "wording": "keep the words exactly",
+        "bursts": "often (natural speech)",
+        "extra": "The voice: a warm, slightly husky woman in her thirties."
+      }
+    },
+    {
+      "id": 5,
+      "type": "TextGenerate",
+      "pos": [
+        1000,
+        40
+      ],
+      "size": [
+        420,
+        460
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        },
+        {
+          "localized_name": "image",
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "localized_name": "video",
+          "name": "video",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "localized_name": "system_prompt",
+          "name": "system_prompt",
+          "shape": 7,
+          "type": "STRING",
+          "link": 3
+        },
+        {
+          "localized_name": "prompt",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "max_length",
+          "name": "max_length",
+          "type": "INT",
+          "widget": {
+            "name": "max_length"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "temperature",
+          "name": "sampling_mode.temperature",
+          "type": "FLOAT",
+          "widget": {
+            "name": "sampling_mode.temperature"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "top_k",
+          "name": "sampling_mode.top_k",
+          "type": "INT",
+          "widget": {
+            "name": "sampling_mode.top_k"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "top_p",
+          "name": "sampling_mode.top_p",
+          "type": "FLOAT",
+          "widget": {
+            "name": "sampling_mode.top_p"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "min_p",
+          "name": "sampling_mode.min_p",
+          "type": "FLOAT",
+          "widget": {
+            "name": "sampling_mode.min_p"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "repetition_penalty",
+          "name": "sampling_mode.repetition_penalty",
+          "type": "FLOAT",
+          "widget": {
+            "name": "sampling_mode.repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "seed",
+          "name": "sampling_mode.seed",
+          "type": "INT",
+          "widget": {
+            "name": "sampling_mode.seed"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "presence_penalty",
+          "name": "sampling_mode.presence_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "sampling_mode.presence_penalty"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "Sampling Mode",
+          "name": "sampling_mode",
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "sampling_mode"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "thinking",
+          "name": "thinking",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "thinking"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "use_default_template",
+          "name": "use_default_template",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "use_default_template"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "mtp",
+          "name": "mtp",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "mtp"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "generated_text",
+          "name": "generated_text",
+          "type": "STRING",
+          "links": [
+            4
+          ]
+        },
+        {
+          "localized_name": "thinking",
+          "name": "thinking",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextGenerate"
+      },
+      "widgets_values": [
+        "You will not believe what happened at the wedding yesterday. My uncle showed up in a full pirate costume, hat and all. Nobody said a word. And honestly, he looked happier than the groom.",
+        512,
+        "on",
+        0.7,
+        64,
+        0.95,
+        0.05,
+        1.05,
+        0,
+        0,
+        false,
+        true,
+        "auto"
+      ],
+      "widgets_values_named": {
+        "prompt": "You will not believe what happened at the wedding yesterday. My uncle showed up in a full pirate costume, hat and all. Nobody said a word. And honestly, he looked happier than the groom.",
+        "max_length": 512,
+        "sampling_mode": "on",
+        "sampling_mode.temperature": 0.7,
+        "sampling_mode.top_k": 64,
+        "sampling_mode.top_p": 0.95,
+        "sampling_mode.min_p": 0.05,
+        "sampling_mode.repetition_penalty": 1.05,
+        "sampling_mode.seed": 0,
+        "sampling_mode.presence_penalty": 0,
+        "thinking": false,
+        "use_default_template": true,
+        "mtp": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "MossTTSV15_ScriptBuilder",
+      "pos": [
+        1000,
+        540
+      ],
+      "size": [
+        420,
+        300
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "director_reply",
+          "name": "director_reply",
+          "type": "STRING",
+          "widget": {
+            "name": "director_reply"
+          },
+          "link": 4
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "speed",
+          "name": "speed",
+          "type": "FLOAT",
+          "widget": {
+            "name": "speed"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "target_seconds",
+          "name": "target_seconds",
+          "type": "FLOAT",
+          "widget": {
+            "name": "target_seconds"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "instruction",
+          "name": "instruction",
+          "type": "STRING",
+          "links": [
+            5,
+            6
+          ]
+        },
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "links": [
+            7
+          ]
+        },
+        {
+          "localized_name": "target_tokens",
+          "name": "target_tokens",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "localized_name": "seconds",
+          "name": "seconds",
+          "type": "FLOAT",
+          "links": null
+        },
+        {
+          "localized_name": "report",
+          "name": "report",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MossTTSV15_ScriptBuilder"
+      },
+      "widgets_values": [
+        "",
+        "instruction + text",
+        "English",
+        1,
+        0
+      ],
+      "widgets_values_named": {
+        "director_reply": "",
+        "format": "instruction + text",
+        "language": "English",
+        "speed": 1,
+        "target_seconds": 0
+      }
+    },
+    {
+      "id": 7,
+      "type": "PreviewAny",
+      "pos": [
+        1460,
+        40
+      ],
+      "size": [
+        440,
+        260
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "source",
+          "name": "source",
+          "type": "*",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "STRING",
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {}
+    },
+    {
+      "id": 8,
+      "type": "MossTTSV15_GenerateSpeech",
+      "pos": [
+        1460,
+        340
+      ],
+      "size": [
+        440,
+        560
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "mosstts_model",
+          "name": "mosstts_model",
+          "type": "MOSSTTS_V15_MODEL",
+          "link": 1
+        },
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 7
+        },
+        {
+          "localized_name": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "instruction",
+          "name": "instruction",
+          "type": "STRING",
+          "widget": {
+            "name": "instruction"
+          },
+          "link": 6
+        },
+        {
+          "localized_name": "audio_temperature",
+          "name": "audio_temperature",
+          "type": "FLOAT",
+          "widget": {
+            "name": "audio_temperature"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audio_top_p",
+          "name": "audio_top_p",
+          "type": "FLOAT",
+          "widget": {
+            "name": "audio_top_p"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audio_top_k",
+          "name": "audio_top_k",
+          "type": "INT",
+          "widget": {
+            "name": "audio_top_k"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audio_repetition_penalty",
+          "name": "audio_repetition_penalty",
+          "type": "FLOAT",
+          "widget": {
+            "name": "audio_repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "text_temperature",
+          "name": "text_temperature",
+          "type": "FLOAT",
+          "widget": {
+            "name": "text_temperature"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "text_top_p",
+          "name": "text_top_p",
+          "type": "FLOAT",
+          "widget": {
+            "name": "text_top_p"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "text_top_k",
+          "name": "text_top_k",
+          "type": "INT",
+          "widget": {
+            "name": "text_top_k"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "target_tokens",
+          "name": "target_tokens",
+          "type": "INT",
+          "widget": {
+            "name": "target_tokens"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "max_new_tokens",
+          "name": "max_new_tokens",
+          "type": "INT",
+          "widget": {
+            "name": "max_new_tokens"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "do_sample",
+          "name": "do_sample",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "do_sample"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "seed",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "sampling_preset",
+          "name": "sampling_preset",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "sampling_preset"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            8
+          ]
+        },
+        {
+          "localized_name": "tokens_generated",
+          "name": "tokens_generated",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MossTTSV15_GenerateSpeech"
+      },
+      "widgets_values": [
+        "Hello! This is MOSS-TTS v1.5 running inside ComfyUI.",
+        "English",
+        "",
+        1.7,
+        0.8,
+        25,
+        1,
+        1,
+        1,
+        50,
+        0,
+        4096,
+        true,
+        42,
+        "fixed",
+        "model recommended"
+      ],
+      "widgets_values_named": {
+        "text": "Hello! This is MOSS-TTS v1.5 running inside ComfyUI.",
+        "language": "English",
+        "instruction": "",
+        "audio_temperature": 1.7,
+        "audio_top_p": 0.8,
+        "audio_top_k": 25,
+        "audio_repetition_penalty": 1,
+        "text_temperature": 1,
+        "text_top_p": 1,
+        "text_top_k": 50,
+        "target_tokens": 0,
+        "max_new_tokens": 4096,
+        "do_sample": true,
+        "seed": 42,
+        "control_after_generate": "fixed",
+        "sampling_preset": "model recommended"
+      }
+    },
+    {
+      "id": 9,
+      "type": "SaveAudioAdvanced",
+      "pos": [
+        1940,
+        340
+      ],
+      "size": [
+        360,
+        136
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 8
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {},
+      "widgets_values": [
+        "audio/moss_8b_director",
+        "flac"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "audio/moss_8b_director",
+        "format": "flac"
+      }
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      0,
+      8,
+      0,
+      "MOSSTTS_V15_MODEL"
+    ],
+    [
+      2,
+      3,
+      0,
+      5,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      4,
+      0,
+      5,
+      4,
+      "STRING"
+    ],
+    [
+      4,
+      5,
+      0,
+      6,
+      0,
+      "STRING"
+    ],
+    [
+      5,
+      6,
+      0,
+      7,
+      0,
+      "STRING"
+    ],
+    [
+      6,
+      6,
+      0,
+      8,
+      3,
+      "STRING"
+    ],
+    [
+      7,
+      6,
+      1,
+      8,
+      1,
+      "STRING"
+    ],
+    [
+      8,
+      8,
+      0,
+      9,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9,
+      "offset": [
+        416,
+        110
+      ]
+    }
+  },
+  "version": 0.4
+}

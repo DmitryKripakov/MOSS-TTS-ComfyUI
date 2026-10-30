@@ -63,6 +63,7 @@ class VariantSpec:
     sampling: Optional[tuple] = None
     sampling_with_reference: Optional[tuple] = None  # cloning / continuation; None = `sampling`
     local_dir: Optional[str] = None  # custom model folder (spec_from_dir); None = resolve repo_id
+    codec_fp32: bool = False         # run the codec in fp32 (LAION's sft3 reference pipeline does)
 
 
 VARIANTS: dict[str, VariantSpec] = {
@@ -117,6 +118,7 @@ VARIANTS: dict[str, VariantSpec] = {
         stereo=True,
         n_vq=12,
         sampling=(1.0, 0.95, 50, 1.0),           # model card inference example
+        codec_fp32=True,                         # its processor defaults codec_weight_dtype="fp32"
     ),
     "laion_va8b": VariantSpec(
         key="laion_va8b",
@@ -178,6 +180,7 @@ def spec_from_dir(model_dir: Path, name: Optional[str] = None) -> VariantSpec:
         stereo=stereo,
         n_vq=int(raw["n_vq"]),
         local_dir=str(model_dir),
+        codec_fp32=True,                          # fp32 never costs quality, only memory
     )
 
 DEFAULT_VARIANT = "local"
@@ -287,6 +290,14 @@ def build_tts_model(spec: VariantSpec, config, attn_implementation: str):
     with torch.device("meta"):
         model = ModelCls(config)
     return model
+
+
+def codec_dtype(spec: VariantSpec, dtype: torch.dtype) -> torch.dtype:
+    """Codec weight / compute dtype: the v1 codec is all-fp32; the v2 codec runs
+    in the model dtype unless the variant asks for fp32 (LAION sft3)."""
+    if spec.codec_asset_pkg == "moss_audio_tokenizer_v1" or getattr(spec, "codec_fp32", False):
+        return torch.float32
+    return dtype
 
 
 def build_codec_model(
@@ -510,8 +521,7 @@ def load_codec_weights(spec: VariantSpec, codec: nn.Module, codec_dir: Path,
     # codec_weight_dtype knob in its code — keep every tensor fp32, exactly as
     # the official from_pretrained path does. The v2 codec (local) is designed
     # for bf16 weights with an fp32 quantizer.
-    codec_dtype = torch.float32 if spec.codec_asset_pkg == "moss_audio_tokenizer_v1" else dtype
-    _load_state_stream(codec, entries, codec_dtype, weight_device, "MOSS-codec",
+    _load_state_stream(codec, entries, codec_dtype(spec, dtype), weight_device, "MOSS-codec",
                        progress_callback, quantizer_fp32=True)
     _materialize_non_persistent_buffers(codec, weight_device)
     _ensure_no_meta_tensors(codec, "MOSS-Audio-Tokenizer")
