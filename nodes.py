@@ -13,7 +13,7 @@ from typing import Any
 
 import torch
 
-from . import compat, director, runtime
+from . import compat, director, runtime, selftest
 from . import lora as adapters
 from .compat import ProgressReporter
 from .loader import (
@@ -456,6 +456,34 @@ class MossTTSV15LoRA:
         return (dataclasses.replace(mosstts_model, loras=loras, speaker=speaker),)
 
 
+class MossTTSV15SelfTest:
+    """Checks the loaded model where it runs: environment, every weight against
+    the checkpoint on disk, and a greedy generation against CPU reference frames."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {"mosstts_model": (MODEL_TYPE, {})}}
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("report",)
+    FUNCTION = "run"
+    CATEGORY = "MOSS-TTS v1.5"
+    OUTPUT_NODE = True
+    DESCRIPTION = ("Diagnostics for broken audio: torch / GPU / attention, every model weight vs the "
+                   "checkpoint on disk, and a greedy generation of LAION's example vs reference frames "
+                   "(LAION sft3). Connect the report to Preview as Text and send it along with the bug.")
+
+    @classmethod
+    def IS_CHANGED(cls, **kwargs):
+        return float("nan")
+
+    def run(self, mosstts_model):
+        bundle = runtime.resume_model(mosstts_model)
+        report = selftest.run(bundle)
+        logger.info("[MOSS-TTS] self test:\n%s", report)
+        return {"ui": {"text": [report]}, "result": (report,)}
+
+
 class MossTTSV15DirectorPrompt:
     """System prompt for an LLM that turns plain text into a performance for
     the voice-acting fine-tunes. Use it as the system prompt of any text
@@ -573,6 +601,7 @@ NODE_CLASS_MAPPINGS = {
     "MossTTSV15_DirectorPrompt": MossTTSV15DirectorPrompt,
     "MossTTSV15_ScriptBuilder": MossTTSV15ScriptBuilder,
     "MossTTSV15_LoRA": MossTTSV15LoRA,
+    "MossTTSV15_SelfTest": MossTTSV15SelfTest,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -585,4 +614,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MossTTSV15_DirectorPrompt": "MOSS-TTS v1.5 Director System Prompt",
     "MossTTSV15_ScriptBuilder": "MOSS-TTS v1.5 Script Builder",
     "MossTTSV15_LoRA": "MOSS-TTS v1.5 LoRA",
+    "MossTTSV15_SelfTest": "MOSS-TTS v1.5 Self Test",
 }

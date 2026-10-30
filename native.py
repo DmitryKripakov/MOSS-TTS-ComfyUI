@@ -255,12 +255,30 @@ def codec_classes(spec: VariantSpec):
 # Config reading (no AutoConfig — direct class construction)
 # ---------------------------------------------------------------------------
 
+def _legacy_rope_fields(cfg):
+    """Copy rope_theta out of rope_parameters (the transformers 5.x layout)
+    into the flat field transformers 4.x reads, in every nested config.
+
+    LAION's fine-tunes were saved with transformers 5: their Qwen3 configs
+    carry only `rope_parameters: {rope_theta: 1000000}`. Under transformers 4.x,
+    Qwen3Config does not know that key and falls back to rope_theta = 10000 —
+    100x off — and the model produces noise and silence. transformers 5 reads
+    the flat field as well, so adding it is safe on both."""
+    if isinstance(cfg, dict):
+        params = cfg.get("rope_parameters")
+        if isinstance(params, dict) and "rope_theta" in params and cfg.get("rope_theta") is None:
+            cfg["rope_theta"] = params["rope_theta"]
+        for value in cfg.values():
+            _legacy_rope_fields(value)
+    return cfg
+
+
 def read_tts_config(spec: VariantSpec, model_dir: Path):
     ConfigCls, _, _ = tts_classes(spec)
     raw = json.loads((model_dir / "config.json").read_text(encoding="utf-8"))
     for meta_key in ("auto_map", "architectures"):
         raw.pop(meta_key, None)
-    return ConfigCls(**raw)
+    return ConfigCls(**_legacy_rope_fields(raw))
 
 
 def read_codec_config(spec: VariantSpec, codec_dir: Path):
@@ -364,9 +382,14 @@ def _materialize_non_persistent_buffers(model: nn.Module, device: torch.device) 
         if "RotaryEmbedding" in cls_name and hasattr(module, "compute_default_rope_parameters"):
             # transformers 5.x: static recompute helper on the module.
             with torch.no_grad():
-                inv_freq, attention_scaling = module.compute_default_rope_parameters(
-                    module.config, device
-                )
+                try:   # 5.x keyword form; 5.21 made `device` keyword-only
+                    inv_freq, attention_scaling = module.compute_default_rope_parameters(
+                        module.config, device=device
+                    )
+                except TypeError:
+                    inv_freq, attention_scaling = module.compute_default_rope_parameters(
+                        module.config, device
+                    )
             for name, buf in metas:
                 if name == "inv_freq":
                     module.register_buffer(name, inv_freq.to(dtype=buf.dtype), persistent=False)

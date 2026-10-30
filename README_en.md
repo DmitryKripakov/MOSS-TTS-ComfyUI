@@ -48,6 +48,7 @@ and `download_if_missing` is on, they download from Hugging Face
 | MOSS-TTS v1.5 Continue Speech | Prefix continuation: extend a clip in the same voice. Outputs both the new segment and the stitched full audio (+ exact frame counts for chaining). |
 | MOSS-TTS v1.5 Estimate Tokens | Text → `target_tokens` estimate for duration control. |
 | MOSS-TTS v1.5 Director System Prompt | System prompt for an LLM (e.g. ComfyUI's Generate Text) that turns plain text into a voice-acting performance for the LAION fine-tunes. |
+| MOSS-TTS v1.5 Self Test | Diagnostics for broken audio: torch / GPU / attention, every weight vs the checkpoint on disk, greedy frames of LAION's example vs CPU reference frames. |
 | MOSS-TTS v1.5 LoRA | Adds a LoRA adapter (unmerged, chainable, own strength) — your own or one of LAION's 605 (500 voices, 40 emotions, DPO quality, 64 sounds). A LAION voice also sets `Speaker: <name>`. |
 | MOSS-TTS v1.5 Script Builder | The LLM's reply → `instruction`, `text`, `target_tokens` for the generate nodes; for sft3 it computes every duration / pause / sound length. |
 
@@ -192,6 +193,12 @@ repetition penalty from the model card, the audio_* widgets are then ignored:
 Keep voice-clone references short (5–15 s); prefix/PKV memory grows linearly with prefix duration.
 
 ## Troubleshooting
+
+- **LAION models (or other transformers-5 checkpoints) give noise / silence while the
+  OpenMOSS ones work**: fixed in this fork — their configs keep `rope_theta` only inside
+  `rope_parameters`, which transformers 4.x ignored (it fell back to 10000 instead of
+  1000000). Update the fork. Run **Self Test** for anything else: its greedy check
+  matches the CPU reference frame for frame when the model runs right.
 
 - **Nothing happens / model can't be found**: the loader prints the exact search paths. Set `$MOSS_TTS_MODELS_DIR` to a directory containing `MOSS-TTS-Local-Transformer-v1.5/` etc., or rely on `HF_HOME` pointing at your HF cache.
 - **flash-attn errors**: set attention to `auto` or `sdpa`. flash-attn is optional; sdpa quality is identical.
