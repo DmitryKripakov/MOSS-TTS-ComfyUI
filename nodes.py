@@ -16,6 +16,7 @@ from .loader import (
     ATTENTION_OPTIONS,
     DTYPE_OPTIONS,
     bundle_generation,
+    list_custom_models,
     load_mosstts_bundle,
 )
 from .native import DEFAULT_VARIANT, VARIANTS
@@ -79,6 +80,42 @@ def _all_knobs() -> dict:
     return merged
 
 
+_PRESET_WIDGETS = "widgets"
+_PRESET_MODEL = "model recommended"
+_OPTIONAL_PRESET = {
+    "sampling_preset": ([_PRESET_WIDGETS, _PRESET_MODEL], {
+        "default": _PRESET_WIDGETS,
+        "tooltip": "widgets = the audio_* values above. model recommended = the audio "
+                   "temperature / top_p / top_k / repetition penalty from the loaded model's "
+                   "card (e.g. LAION sft3: 1.0 / 0.95 / 50 / 1.0); the audio_* widgets are "
+                   "then ignored. Custom folders have no card values — widgets are used.",
+    }),
+}
+
+
+def _audio_sampling(mosstts_model, preset: str, with_reference: bool, temperature: float,
+                    top_p: float, top_k: int, repetition_penalty: float) -> dict:
+    """The audio_* knobs to use: the widgets, or the model card's recommendation."""
+    values = (temperature, top_p, top_k, repetition_penalty)
+    if preset == _PRESET_MODEL:
+        spec = mosstts_model.spec
+        card = (getattr(spec, "sampling_with_reference", None) if with_reference else None) \
+            or getattr(spec, "sampling", None)
+        if card:
+            values = card
+            logger.info("[MOSS-TTS] model recommended audio sampling for %s: "
+                        "temperature=%s top_p=%s top_k=%s repetition_penalty=%s",
+                        spec.key, *values)
+        else:
+            logger.info("[MOSS-TTS] %s has no recommended sampling — using the widgets.", spec.key)
+    temperature, top_p, top_k, repetition_penalty = values
+    return {"audio_temperature": float(temperature), "audio_top_p": float(top_p),
+            "audio_top_k": int(top_k), "audio_repetition_penalty": float(repetition_penalty)}
+
+
+_CUSTOM_NONE = "none"
+
+
 class MossTTSV15LoadModel:
     @classmethod
     def INPUT_TYPES(cls):
@@ -91,7 +128,17 @@ class MossTTSV15LoadModel:
                                                   "tooltip": "auto = flash_attention_2 when the flash_attn package exists, else sdpa."}),
                 "download_if_missing": ("BOOLEAN", {"default": True,
                                                     "tooltip": "Resolve models from $MOSS_TTS_MODELS_DIR / HF cache / models/mosstts first; download only when missing."}),
-            }
+            },
+            "optional": {
+                "custom_model": ([_CUSTOM_NONE] + sorted(list_custom_models()), {
+                    "default": _CUSTOM_NONE,
+                    "tooltip": "A fine-tune in its own folder under models/mosstts (or "
+                               "$MOSS_TTS_MODELS_DIR), up to two levels deep — e.g. your own "
+                               "model or a training checkpoint. Overrides `model`; the family "
+                               "(Local / Delay) is read from its config.json. Refresh the page "
+                               "after adding a folder.",
+                }),
+            },
         }
 
     RETURN_TYPES = (MODEL_TYPE,)
@@ -104,12 +151,23 @@ class MossTTSV15LoadModel:
     def IS_CHANGED(cls, **kwargs):
         return bundle_generation()
 
-    def load_model(self, model: str, dtype: str, attention: str, download_if_missing: bool):
+    def load_model(self, model: str, dtype: str, attention: str, download_if_missing: bool,
+                   custom_model: str = _CUSTOM_NONE):
+        custom_dir = None
+        if custom_model and custom_model != _CUSTOM_NONE:
+            folders = list_custom_models()
+            if custom_model not in folders:
+                raise FileNotFoundError(
+                    f"custom_model {custom_model!r} is no longer in models/mosstts "
+                    f"(found: {sorted(folders) or 'nothing'})."
+                )
+            custom_dir = str(folders[custom_model])
         bundle = load_mosstts_bundle(
             variant=_LABEL_TO_KEY[model],
             dtype_name=dtype,
             attention=attention,
             download_if_missing=bool(download_if_missing),
+            custom_dir=custom_dir,
         )
         return (bundle,)
 
@@ -123,7 +181,7 @@ class MossTTSV15GenerateSpeech:
                                 "tooltip": "Text to synthesize. Supports [pause 3.2s] markers, Pinyin and IPA (delay variant)."}),
         }
         required.update(_all_knobs())
-        return {"required": required}
+        return {"required": required, "optional": dict(_OPTIONAL_PRESET)}
 
     RETURN_TYPES = ("AUDIO", "INT")
     RETURN_NAMES = ("audio", "tokens_generated")
@@ -133,14 +191,15 @@ class MossTTSV15GenerateSpeech:
 
     def generate(self, mosstts_model, text, language, instruction, audio_temperature,
                  audio_top_p, audio_top_k, audio_repetition_penalty, text_temperature,
-                 text_top_p, text_top_k, target_tokens, max_new_tokens, do_sample, seed):
+                 text_top_p, text_top_k, target_tokens, max_new_tokens, do_sample, seed,
+                 sampling_preset=_PRESET_WIDGETS):
+        audio_knobs = _audio_sampling(mosstts_model, sampling_preset, False, audio_temperature,
+                                      audio_top_p, audio_top_k, audio_repetition_penalty)
         wav, frames = runtime.generate_speech(
             mosstts_model, text=text, language=language, instruction=instruction,
             target_tokens=target_tokens, max_new_tokens=max_new_tokens, seed=seed,
             do_sample=do_sample, text_temperature=text_temperature, text_top_p=text_top_p,
-            text_top_k=text_top_k, audio_temperature=audio_temperature,
-            audio_top_p=audio_top_p, audio_top_k=audio_top_k,
-            audio_repetition_penalty=audio_repetition_penalty,
+            text_top_k=text_top_k, **audio_knobs,
             progress_callback=ProgressReporter(max_new_tokens),
         )
         return (runtime.tensor_to_comfy_audio(wav, mosstts_model.spec.sample_rate), frames)
@@ -155,7 +214,7 @@ class MossTTSV15VoiceClone:
             "text": ("STRING", {"multiline": True, "default": "This line will be spoken in the reference voice."}),
         }
         required.update(_all_knobs())
-        return {"required": required}
+        return {"required": required, "optional": dict(_OPTIONAL_PRESET)}
 
     RETURN_TYPES = ("AUDIO", "INT")
     RETURN_NAMES = ("audio", "tokens_generated")
@@ -166,14 +225,15 @@ class MossTTSV15VoiceClone:
     def clone(self, mosstts_model, reference_audio, text, language, instruction,
               audio_temperature, audio_top_p, audio_top_k, audio_repetition_penalty,
               text_temperature, text_top_p, text_top_k, target_tokens, max_new_tokens,
-              do_sample, seed):
+              do_sample, seed, sampling_preset=_PRESET_WIDGETS):
+        audio_knobs = _audio_sampling(mosstts_model, sampling_preset, True, audio_temperature,
+                                      audio_top_p, audio_top_k, audio_repetition_penalty)
         wav, frames = runtime.voice_clone(
             mosstts_model, reference_audio=reference_audio, text=text, language=language,
             instruction=instruction, target_tokens=target_tokens,
             max_new_tokens=max_new_tokens, do_sample=do_sample,
             text_temperature=text_temperature, text_top_p=text_top_p, text_top_k=text_top_k,
-            audio_temperature=audio_temperature, audio_top_p=audio_top_p,
-            audio_top_k=audio_top_k, audio_repetition_penalty=audio_repetition_penalty,
+            **audio_knobs,
             seed=seed, progress_callback=ProgressReporter(max_new_tokens),
         )
         return (runtime.tensor_to_comfy_audio(wav, mosstts_model.spec.sample_rate), frames)
@@ -200,7 +260,7 @@ class MossTTSV15VoiceDesign:
             "instruction": instruction,
             "text": ("STRING", {"multiline": True, "default": "Hello! This voice was designed from a text description."}),
             **knobs,
-        }}
+        }, "optional": dict(_OPTIONAL_PRESET)}
 
     RETURN_TYPES = ("AUDIO", "INT")
     RETURN_NAMES = ("audio", "tokens_generated")
@@ -210,18 +270,19 @@ class MossTTSV15VoiceDesign:
 
     def run(self, mosstts_model, text, language, instruction, audio_temperature,
             audio_top_p, audio_top_k, audio_repetition_penalty, text_temperature,
-            text_top_p, text_top_k, target_tokens, max_new_tokens, do_sample, seed):
+            text_top_p, text_top_k, target_tokens, max_new_tokens, do_sample, seed,
+            sampling_preset=_PRESET_WIDGETS):
         if mosstts_model.spec.key != "voicegen":
             raise ValueError("Voice Design 需要在 Load Model 里选择 MOSS-VoiceGenerator。")
         if not (instruction or "").strip():
             raise ValueError("Voice Design 必须提供音色描述（instruction）。")
+        audio_knobs = _audio_sampling(mosstts_model, sampling_preset, False, audio_temperature,
+                                      audio_top_p, audio_top_k, audio_repetition_penalty)
         wav, frames = runtime.generate_speech(
             mosstts_model, text=text, language=language, instruction=instruction,
             target_tokens=target_tokens, max_new_tokens=max_new_tokens, seed=seed,
             do_sample=do_sample, text_temperature=text_temperature, text_top_p=text_top_p,
-            text_top_k=text_top_k, audio_temperature=audio_temperature,
-            audio_top_p=audio_top_p, audio_top_k=audio_top_k,
-            audio_repetition_penalty=audio_repetition_penalty,
+            text_top_k=text_top_k, **audio_knobs,
             progress_callback=ProgressReporter(max_new_tokens),
         )
         return (runtime.tensor_to_comfy_audio(wav, mosstts_model.spec.sample_rate), frames)
@@ -243,7 +304,7 @@ class MossTTSV15ContinueSpeech:
                                          "tooltip": "Frames trimmed from the start of the NEW segment (codec receptive-field bleed ≈ 80 ms/frame)."}),
         }
         required.update(_all_knobs())
-        return {"required": required}
+        return {"required": required, "optional": dict(_OPTIONAL_PRESET)}
 
     RETURN_TYPES = ("AUDIO", "INT", "AUDIO", "INT")
     RETURN_NAMES = ("audio", "tokens_generated", "full_audio", "full_tokens")
@@ -255,16 +316,17 @@ class MossTTSV15ContinueSpeech:
                         previous_tokens, head_trim_frames, language, instruction,
                         audio_temperature, audio_top_p, audio_top_k,
                         audio_repetition_penalty, text_temperature, text_top_p, text_top_k,
-                        target_tokens, max_new_tokens, do_sample, seed):
+                        target_tokens, max_new_tokens, do_sample, seed,
+                        sampling_preset=_PRESET_WIDGETS):
+        audio_knobs = _audio_sampling(mosstts_model, sampling_preset, True, audio_temperature,
+                                      audio_top_p, audio_top_k, audio_repetition_penalty)
         wav, frames, full_wav, full_frames = runtime.continue_speech(
             mosstts_model, previous_audio=previous_audio, previous_text=previous_text,
             text=text, language=language, instruction=instruction,
             target_tokens=target_tokens, previous_tokens=previous_tokens,
             head_trim_frames=head_trim_frames, max_new_tokens=max_new_tokens,
             do_sample=do_sample, text_temperature=text_temperature, text_top_p=text_top_p,
-            text_top_k=text_top_k, audio_temperature=audio_temperature,
-            audio_top_p=audio_top_p, audio_top_k=audio_top_k,
-            audio_repetition_penalty=audio_repetition_penalty, seed=seed,
+            text_top_k=text_top_k, **audio_knobs, seed=seed,
             progress_callback=ProgressReporter(max_new_tokens),
         )
         sr = mosstts_model.spec.sample_rate

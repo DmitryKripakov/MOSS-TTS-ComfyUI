@@ -41,7 +41,7 @@ and `download_if_missing` is on, they download from Hugging Face
 
 | Node | Purpose |
 |---|---|
-| MOSS-TTS v1.5 Load Model | Load variant (`local` / `delay` / `voicegen`), dtype (auto/bf16/fp16/fp32), attention (auto/sdpa/flash_attention_2/eager), download toggle. |
+| MOSS-TTS v1.5 Load Model | Load variant (`local` / `delay` / `voicegen` / LAION fine-tunes) or a `custom_model` folder, dtype (auto/bf16/fp16/fp32), attention (auto/sdpa/flash_attention_2/eager), download toggle. |
 | MOSS-TTS v1.5 Generate Speech | Reference-free TTS. |
 | MOSS-TTS v1.5 Voice Clone | Clone from a reference `AUDIO` input. |
 | MOSS-TTS v1.5 Voice Design | `instruction` holds the voice description (required); speaks it directly (use with VoiceGenerator). |
@@ -49,6 +49,36 @@ and `download_if_missing` is on, they download from Hugging Face
 | MOSS-TTS v1.5 Estimate Tokens | Text → `target_tokens` estimate for duration control. |
 
 All generator nodes output `tokens_generated` (audio frames; seconds = frames / 12.5) so continuation chains can hand exact prefix lengths forward.
+
+## Fine-tunes (this fork)
+
+**LAION voice-acting** models are in the Load Model list; they run on the same
+vendored code as the OpenMOSS originals (checked: identical model code, every
+checkpoint tensor name and shape matches):
+
+| Variant | Repo | Notes |
+|---|---|---|
+| LAION voice-acting sft3 | [laion/moss-tts-local-transformer-4.55b-voice-acting-v2-sft3](https://huggingface.co/laion/moss-tts-local-transformer-4.55b-voice-acting-v2-sft3) | Local family, 48 kHz, English / German, CC-BY-4.0. Timed scripts: `[2.4 seconds duration]`, `[0.3 seconds pause]`, `(breathy giggle, 0.4 seconds)`, `(clearly amused)`. |
+| LAION voice-acting 8B | [laion/moss-tts-v1.5-8b-voice-acting](https://huggingface.co/laion/moss-tts-v1.5-8b-voice-acting) | Delay family, 24 kHz, multilingual, Apache-2.0. `instruction` works together with a voice reference. |
+
+**Your own fine-tunes**: put the model folder (config.json + safetensors +
+tokenizer files) under `ComfyUI/models/mosstts/` (or `$MOSS_TTS_MODELS_DIR`),
+up to two levels deep — e.g. `mosstts/my_voice/` or `mosstts/runs/ckpt-500/` —
+and pick it in Load Model's `custom_model` (refresh the page after adding).
+The family (Local / Delay), n_vq and sample rate come from its config.json; the
+codec is the family's own. `custom_model` overrides `model`.
+
+**`sampling_preset`** (Generate / Clone / Design / Continue): `widgets` (default,
+old behaviour) or `model recommended` — the audio temperature / top_p / top_k /
+repetition penalty from the model card, the audio_* widgets are then ignored:
+
+| Model | Without reference | With reference (Clone, Continue) |
+|---|---|---|
+| OpenMOSS Local / Delay | 1.7 / 0.8 / 25 / 1.0 | same |
+| MOSS-VoiceGenerator | 1.5 / 0.6 / 50 / 1.1 | same |
+| LAION sft3 | 1.0 / 0.95 / 50 / 1.0 | same |
+| LAION 8B | 0.8 / 0.95 / 25 / 1.1 | 1.0 / 0.95 / 25 / 1.1 |
+| custom folder | widgets | widgets |
 
 ## VRAM
 

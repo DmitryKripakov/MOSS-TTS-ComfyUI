@@ -95,10 +95,37 @@ def _resolve_dir_for(repo_id: str, download_if_missing: bool) -> Path:
 
 
 def resolve_model_dirs(spec: VariantSpec, download_if_missing: bool) -> tuple[Path, Path]:
-    return (
-        _resolve_dir_for(spec.repo_id, download_if_missing),
-        _resolve_dir_for(spec.codec_repo_id, download_if_missing),
-    )
+    model_dir = Path(spec.local_dir) if spec.local_dir else _resolve_dir_for(spec.repo_id, download_if_missing)
+    return model_dir, _resolve_dir_for(spec.codec_repo_id, download_if_missing)
+
+
+_CUSTOM_SCAN_DEPTH = 2  # models/mosstts/<name>/ and models/mosstts/<name>/<checkpoint>/
+
+
+def list_custom_models() -> dict[str, Path]:
+    """MOSS-TTS model folders under the model roots ($MOSS_TTS_MODELS_DIR,
+    ComfyUI models/mosstts), up to two levels deep — fine-tunes, training
+    checkpoints. Folders of the built-in variants (picked by the `model`
+    combo) and codecs are left out. {label (relative path): folder}."""
+    builtin = {spec.repo_id.split("/")[-1] for spec in VARIANTS.values()}
+    found: dict[str, Path] = {}
+
+    def scan(root: Path, rel: tuple[str, ...]) -> None:
+        try:
+            children = sorted(p for p in root.iterdir() if p.is_dir() and not p.name.startswith("."))
+        except OSError:
+            return
+        for child in children:
+            parts = rel + (child.name,)
+            if native.model_family(child) is not None:
+                if not (len(parts) == 1 and child.name in builtin):
+                    found.setdefault("/".join(parts), child)
+            elif len(parts) < _CUSTOM_SCAN_DEPTH:
+                scan(child, parts)
+
+    for root in _models_root_candidates():
+        scan(root, ())
+    return found
 
 
 # ---------------------------------------------------------------------------
@@ -245,13 +272,18 @@ def load_mosstts_bundle(
     attention: str = "auto",
     download_if_missing: bool = True,
     load_progress_callback: Optional[Callable[[int, int], None]] = None,
+    custom_dir: Optional[str] = None,
 ) -> MossTTSBundle:
-    """Load (or reuse) a MOSS-TTS bundle."""
+    """Load (or reuse) a MOSS-TTS bundle. `custom_dir` (a fine-tune's folder)
+    replaces `variant`."""
     global _ACTIVE_BUNDLE, _ACTIVE_LOAD_KEY
 
-    if variant not in VARIANTS:
+    if custom_dir:
+        spec = native.spec_from_dir(Path(custom_dir))
+    elif variant not in VARIANTS:
         raise ValueError(f"unknown variant {variant!r}, expected one of {sorted(VARIANTS)}")
-    spec = VARIANTS[variant]
+    else:
+        spec = VARIANTS[variant]
     model_dir, codec_dir = resolve_model_dirs(spec, download_if_missing)
     device = compat.normalize_device(compat.get_torch_device())
     dtype = resolve_dtype(dtype_name, device)
@@ -340,11 +372,15 @@ def ensure_mosstts_bundle(bundle: MossTTSBundle) -> MossTTSBundle:
     ):
         return bundle
     logger.info("Reactivating cached MOSS-TTS bundle for variant=%s.", bundle.spec.key)
+    extra = {}
+    if getattr(bundle.spec, "local_dir", None):
+        extra["custom_dir"] = bundle.spec.local_dir
     return load_mosstts_bundle(
         bundle.spec.key,
         dtype_name=bundle.dtype_name,
         attention=bundle.attn_implementation,
         download_if_missing=False,
+        **extra,
     )
 
 

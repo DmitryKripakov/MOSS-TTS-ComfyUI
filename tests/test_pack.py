@@ -3,6 +3,8 @@ fail-fast guards, and comfy-compat fallbacks. No weights, no GPU."""
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 import torch
 
@@ -36,6 +38,153 @@ def test_variant_specs():
     assert voicegen.repo_id == "OpenMOSS-Team/MOSS-VoiceGenerator"
     assert "tokenizer" in ("tokenizer",)  # smoke: nothing to check, kept honest
     assert local.repo_id != delay.repo_id and local.codec_repo_id != delay.codec_repo_id
+
+
+def test_laion_variants_share_the_base_families():
+    from moss_tts.native import VARIANTS
+
+    sft3, va8b = VARIANTS["laion_sft3"], VARIANTS["laion_va8b"]
+    for ft, base in ((sft3, VARIANTS["local"]), (va8b, VARIANTS["delay"])):
+        assert (ft.asset_pkg, ft.codec_asset_pkg, ft.codec_repo_id, ft.sample_rate, ft.stereo, ft.n_vq) == \
+            (base.asset_pkg, base.codec_asset_pkg, base.codec_repo_id, base.sample_rate, base.stereo, base.n_vq)
+        assert ft.repo_id.startswith("laion/") and ft.local_dir is None
+    assert sft3.sampling == (1.0, 0.95, 50, 1.0)
+    assert va8b.sampling == (0.8, 0.95, 25, 1.1) and va8b.sampling_with_reference == (1.0, 0.95, 25, 1.1)
+    labels = [v.label for v in VARIANTS.values()]
+    assert len(labels) == len(set(labels))  # the Load Model combo maps label -> key
+
+
+# ---------------------------------------------------------------------------
+# custom model folders
+# ---------------------------------------------------------------------------
+
+def _model_dir(path, model_type="moss_tts_local", n_vq=12, rate=48000):
+    import json
+
+    path.mkdir(parents=True)
+    (path / "config.json").write_text(json.dumps(
+        {"model_type": model_type, "n_vq": n_vq, "sampling_rate": rate}))
+    return path
+
+
+def test_spec_from_dir_reads_family(tmp_path):
+    from moss_tts import native
+
+    spec = native.spec_from_dir(_model_dir(tmp_path / "my_voice"))
+    assert spec.key == "custom:my_voice" and spec.local_dir == str(tmp_path / "my_voice")
+    assert spec.asset_pkg == "moss_tts_local" and spec.codec_asset_pkg == "moss_audio_tokenizer_v2"
+    assert spec.stereo and spec.sample_rate == 48000 and spec.sampling is None
+    gen = native.spec_from_dir(_model_dir(tmp_path / "gen", "moss_tts_delay", 16, 24000))
+    assert gen.asset_pkg == "moss_tts_delay" and gen.n_vq == 16 and not gen.stereo
+    codec = _model_dir(tmp_path / "codec", "moss-audio-tokenizer")
+    with pytest.raises(ValueError, match="not a MOSS-TTS model folder"):
+        native.spec_from_dir(codec)
+
+
+def test_list_custom_models(tmp_path, monkeypatch):
+    from moss_tts import loader
+
+    root = tmp_path / "mosstts"
+    _model_dir(root / "my_voice")
+    _model_dir(root / "runs" / "ckpt-500", "moss_tts_delay", 32, 24000)
+    _model_dir(root / "MOSS-TTS-v1.5", "moss_tts_delay", 32, 24000)      # built-in variant
+    _model_dir(root / "MOSS-Audio-Tokenizer", "moss-audio-tokenizer")    # codec
+    _model_dir(root / "a" / "b" / "too_deep")
+    (root / "empty").mkdir()
+    monkeypatch.setenv("MOSS_TTS_MODELS_DIR", str(root))
+    monkeypatch.setattr(loader.compat, "comfy_models_dir", lambda: None)
+    found = loader.list_custom_models()
+    assert found == {"my_voice": root / "my_voice", "runs/ckpt-500": root / "runs" / "ckpt-500"}
+
+
+def test_resolve_model_dirs_uses_custom_folder(tmp_path, monkeypatch):
+    from moss_tts import loader, native
+
+    spec = native.spec_from_dir(_model_dir(tmp_path / "mine"))
+    monkeypatch.setattr(loader, "_resolve_dir_for", lambda repo, dl: Path(f"/hf/{repo}"))
+    model_dir, codec_dir = loader.resolve_model_dirs(spec, False)
+    assert model_dir == tmp_path / "mine"
+    assert codec_dir == Path("/hf/OpenMOSS-Team/MOSS-Audio-Tokenizer-v2")
+
+
+def test_load_model_node_custom_model(tmp_path, monkeypatch):
+    import moss_tts.nodes as nodes
+
+    root = tmp_path / "mosstts"
+    _model_dir(root / "my_voice")
+    monkeypatch.setenv("MOSS_TTS_MODELS_DIR", str(root))
+    monkeypatch.setattr(nodes, "list_custom_models",
+                        lambda: {"my_voice": root / "my_voice"})
+    captured = {}
+    monkeypatch.setattr(nodes, "load_mosstts_bundle", lambda **kw: captured.update(kw) or "bundle")
+    node = nodes.MossTTSV15LoadModel()
+    label = nodes._VARIANT_LABELS[0]
+    assert "custom_model" in node.INPUT_TYPES()["optional"]
+    assert node.load_model(label, "auto", "auto", False) == ("bundle",)
+    assert captured["custom_dir"] is None
+    node.load_model(label, "auto", "auto", False, custom_model="my_voice")
+    assert captured["custom_dir"] == str(root / "my_voice")
+    with pytest.raises(FileNotFoundError, match="gone"):
+        node.load_model(label, "auto", "auto", False, custom_model="gone")
+
+
+def test_stale_custom_bundle_reactivates_from_its_folder(monkeypatch):
+    from types import SimpleNamespace
+
+    from moss_tts import loader
+
+    stale = SimpleNamespace(spec=SimpleNamespace(key="custom:mine", local_dir="/m/mine"), model=None,
+                            codec=None, dtype_name="bf16", attn_implementation="sdpa")
+    captured = {}
+    monkeypatch.setattr(loader, "load_mosstts_bundle", lambda variant, **kw: captured.update(kw) or "ok")
+    assert loader.ensure_mosstts_bundle(stale) == "ok"
+    assert captured["custom_dir"] == "/m/mine"
+
+
+# ---------------------------------------------------------------------------
+# sampling preset
+# ---------------------------------------------------------------------------
+
+def test_audio_sampling_preset():
+    from types import SimpleNamespace
+
+    import moss_tts.nodes as nodes
+    from moss_tts.native import VARIANTS
+
+    widgets = (1.7, 0.8, 25, 1.0)
+    va8b = SimpleNamespace(spec=VARIANTS["laion_va8b"])
+    sft3 = SimpleNamespace(spec=VARIANTS["laion_sft3"])
+    custom = SimpleNamespace(spec=SimpleNamespace(key="custom:x", sampling=None, sampling_with_reference=None))
+
+    def vals(model, preset, ref):
+        d = nodes._audio_sampling(model, preset, ref, *widgets)
+        return (d["audio_temperature"], d["audio_top_p"], d["audio_top_k"], d["audio_repetition_penalty"])
+
+    assert vals(sft3, "widgets", False) == widgets
+    assert vals(sft3, "model recommended", False) == (1.0, 0.95, 50, 1.0)
+    assert vals(sft3, "model recommended", True) == (1.0, 0.95, 50, 1.0)    # no separate clone values
+    assert vals(va8b, "model recommended", False) == (0.8, 0.95, 25, 1.1)
+    assert vals(va8b, "model recommended", True) == (1.0, 0.95, 25, 1.1)
+    assert vals(custom, "model recommended", True) == widgets               # no card: widgets
+
+
+def test_generator_nodes_take_sampling_preset(monkeypatch):
+    import moss_tts.nodes as nodes
+    from moss_tts.native import VARIANTS
+
+    for cls in (nodes.MossTTSV15GenerateSpeech, nodes.MossTTSV15VoiceClone,
+                nodes.MossTTSV15VoiceDesign, nodes.MossTTSV15ContinueSpeech):
+        opt = cls.INPUT_TYPES()["optional"]["sampling_preset"]
+        assert opt[1]["default"] == "widgets"  # old workflows keep their widget values
+    seen = {}
+    monkeypatch.setattr(nodes.runtime, "voice_clone",
+                        lambda model, **kw: seen.update(kw) or (torch.zeros(2, 10), 1))
+    monkeypatch.setattr(nodes, "ProgressReporter", lambda n: None)
+    model = type("M", (), {"spec": VARIANTS["laion_va8b"]})()
+    nodes.MossTTSV15VoiceClone().clone(
+        model, {"waveform": torch.zeros(1, 1, 10), "sample_rate": 24000}, "hi", "auto", "",
+        1.7, 0.8, 25, 1.0, 1.0, 1.0, 50, 0, 100, True, 42, sampling_preset="model recommended")
+    assert (seen["audio_temperature"], seen["audio_top_k"], seen["audio_repetition_penalty"]) == (1.0, 25, 1.1)
 
 
 # ---------------------------------------------------------------------------

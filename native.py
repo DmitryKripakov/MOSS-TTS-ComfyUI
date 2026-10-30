@@ -12,6 +12,10 @@ Supports both v1.5 variants:
     transformer), MOSS-Audio-Tokenizer-v2, 48 kHz stereo, n_vq=12.
   * "delay"  — MossTTSDelayModel (Qwen3 8B, delay-pattern streams),
     MOSS-Audio-Tokenizer (v1), 24 kHz mono, n_vq=32.
+
+Fine-tunes of either family (LAION voice-acting, your own) load through the
+same code: they are listed in VARIANTS, or built from a folder's config.json
+by spec_from_dir().
 """
 
 from __future__ import annotations
@@ -54,6 +58,11 @@ class VariantSpec:
     stereo: bool                     # native decode output channel count
     n_vq: int
     frames_per_second: float = 12.5  # MOSS acoustic frame rate (both variants)
+    # Recommended audio sampling (temperature, top_p, top_k, repetition_penalty)
+    # from the model card; used by the nodes' sampling_preset = "model recommended".
+    sampling: Optional[tuple] = None
+    sampling_with_reference: Optional[tuple] = None  # cloning / continuation; None = `sampling`
+    local_dir: Optional[str] = None  # custom model folder (spec_from_dir); None = resolve repo_id
 
 
 VARIANTS: dict[str, VariantSpec] = {
@@ -67,6 +76,7 @@ VARIANTS: dict[str, VariantSpec] = {
         sample_rate=48000,
         stereo=True,
         n_vq=12,
+        sampling=(1.7, 0.8, 25, 1.0),
     ),
     "delay": VariantSpec(
         key="delay",
@@ -78,6 +88,7 @@ VARIANTS: dict[str, VariantSpec] = {
         sample_rate=24000,
         stereo=False,
         n_vq=32,
+        sampling=(1.7, 0.8, 25, 1.0),
     ),
     "voicegen": VariantSpec(
         key="voicegen",
@@ -91,8 +102,83 @@ VARIANTS: dict[str, VariantSpec] = {
         sample_rate=24000,
         stereo=False,
         n_vq=16,
+        sampling=(1.5, 0.6, 50, 1.1),
+    ),
+    # LAION voice-acting fine-tunes — the same model code as the OpenMOSS
+    # originals (checked file by file), only the weights differ.
+    "laion_sft3": VariantSpec(
+        key="laion_sft3",
+        label="LAION voice-acting sft3 (4.55B Local, 48kHz stereo, EN/DE)",
+        repo_id="laion/moss-tts-local-transformer-4.55b-voice-acting-v2-sft3",
+        codec_repo_id="OpenMOSS-Team/MOSS-Audio-Tokenizer-v2",
+        asset_pkg="moss_tts_local",
+        codec_asset_pkg="moss_audio_tokenizer_v2",
+        sample_rate=48000,
+        stereo=True,
+        n_vq=12,
+        sampling=(1.0, 0.95, 50, 1.0),           # model card inference example
+    ),
+    "laion_va8b": VariantSpec(
+        key="laion_va8b",
+        label="LAION voice-acting 8B (Delay, 24kHz, multilingual)",
+        repo_id="laion/moss-tts-v1.5-8b-voice-acting",
+        codec_repo_id="OpenMOSS-Team/MOSS-Audio-Tokenizer",
+        asset_pkg="moss_tts_delay",
+        codec_asset_pkg="moss_audio_tokenizer_v1",
+        sample_rate=24000,
+        stereo=False,
+        n_vq=32,
+        sampling=(0.8, 0.95, 25, 1.1),           # GENERATION_SETTINGS.md grid search
+        sampling_with_reference=(1.0, 0.95, 25, 1.1),
     ),
 }
+
+# config.json model_type -> (asset_pkg, codec_repo_id, codec_asset_pkg, stereo)
+_FAMILIES = {
+    "moss_tts_local": ("moss_tts_local", "OpenMOSS-Team/MOSS-Audio-Tokenizer-v2",
+                       "moss_audio_tokenizer_v2", True),
+    "moss_tts_delay": ("moss_tts_delay", "OpenMOSS-Team/MOSS-Audio-Tokenizer",
+                       "moss_audio_tokenizer_v1", False),
+}
+
+
+def model_family(model_dir: Path) -> Optional[str]:
+    """model_type of a MOSS-TTS model folder, or None when it is not one
+    (no config.json, a codec, anything else)."""
+    try:
+        raw = json.loads((Path(model_dir) / "config.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    model_type = raw.get("model_type") if isinstance(raw, dict) else None
+    return model_type if model_type in _FAMILIES else None
+
+
+def spec_from_dir(model_dir: Path, name: Optional[str] = None) -> VariantSpec:
+    """VariantSpec for a custom model folder (a fine-tune of either family):
+    family, n_vq and sample rate come from its config.json; the codec is the
+    family's own. No recommended sampling — the widgets are used."""
+    model_dir = Path(model_dir)
+    family = model_family(model_dir)
+    if family is None:
+        raise ValueError(
+            f"{model_dir} is not a MOSS-TTS model folder: config.json with model_type "
+            f"{sorted(_FAMILIES)} expected."
+        )
+    raw = json.loads((model_dir / "config.json").read_text(encoding="utf-8"))
+    asset_pkg, codec_repo, codec_pkg, stereo = _FAMILIES[family]
+    name = name or model_dir.name
+    return VariantSpec(
+        key=f"custom:{name}",
+        label=name,
+        repo_id=str(model_dir),
+        codec_repo_id=codec_repo,
+        asset_pkg=asset_pkg,
+        codec_asset_pkg=codec_pkg,
+        sample_rate=int(raw.get("sampling_rate") or (48000 if stereo else 24000)),
+        stereo=stereo,
+        n_vq=int(raw["n_vq"]),
+        local_dir=str(model_dir),
+    )
 
 DEFAULT_VARIANT = "local"
 
