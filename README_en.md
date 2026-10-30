@@ -47,6 +47,8 @@ and `download_if_missing` is on, they download from Hugging Face
 | MOSS-TTS v1.5 Voice Design | `instruction` holds the voice description (required); speaks it directly (use with VoiceGenerator). |
 | MOSS-TTS v1.5 Continue Speech | Prefix continuation: extend a clip in the same voice. Outputs both the new segment and the stitched full audio (+ exact frame counts for chaining). |
 | MOSS-TTS v1.5 Estimate Tokens | Text → `target_tokens` estimate for duration control. |
+| MOSS-TTS v1.5 Director System Prompt | System prompt for an LLM (e.g. ComfyUI's Generate Text) that turns plain text into a voice-acting performance for the LAION fine-tunes. |
+| MOSS-TTS v1.5 Script Builder | The LLM's reply → `instruction`, `text`, `target_tokens` for the generate nodes; for sft3 it computes every duration / pause / sound length. |
 
 All generator nodes output `tokens_generated` (audio frames; seconds = frames / 12.5) so continuation chains can hand exact prefix lengths forward.
 
@@ -67,6 +69,30 @@ up to two levels deep — e.g. `mosstts/my_voice/` or `mosstts/runs/ckpt-500/` �
 and pick it in Load Model's `custom_model` (refresh the page after adding).
 The family (Local / Delay), n_vq and sample rate come from its config.json; the
 codec is the family's own. `custom_model` overrides `model`.
+
+**Text → performance with an LLM** (the two-layer setup LAION uses):
+
+```
+Director System Prompt ──system_prompt──► Generate Text (core) ──text──► Script Builder
+                                              ▲ prompt = your plain text      │ instruction, text, target_tokens
+                                                                              ▼
+                                                     Generate Speech / Voice Clone (LAION sft3 or 8B)
+```
+
+- The LLM writes the performance and **never a number**: a delivery cue before every
+  sentence `(clearly amused, letting it show)`, vocal bursts in their own brackets
+  between sentences `(chuckle)`, beats `[pause]` / `[long pause]`.
+- Script Builder adds the arithmetic sft3 was trained on: `[N.N seconds duration]`
+  per segment (4 frames per word), `[N.N seconds pause]`, `(label, N.N seconds)`,
+  splits segments over 12 s, and makes `target_tokens` the exact sum at 12.5 fps.
+  The timed script goes into both `SCRIPT:` (inside `instruction`) and `text`,
+  byte-identical, as the format requires. It reproduces LAION's published worked
+  examples exactly.
+- Director `target`: *sft3 — timed script* or *8B / MOSS — instruction + text*
+  (one instruction for the whole text, no tags). `voice`: describe the voice
+  (Generate Speech) or leave it to the reference clip (Voice Clone).
+- sft3 speaks English and German; cues stay English either way. Set the same
+  `language` on the generate node, and `sampling_preset` = model recommended.
 
 **`sampling_preset`** (Generate / Clone / Design / Continue): `widgets` (default,
 old behaviour) or `model recommended` — the audio temperature / top_p / top_k /
